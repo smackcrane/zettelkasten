@@ -9,9 +9,15 @@
 
 import yaml
 import curses
+import datetime
 import os
 
 kasten_dir = "/home/sander/zettelkasten/kasten/"
+
+zettel_template = {
+        'TITLE': '',
+        'BODY' : ''
+        }
 
 # entry point: list of IDs and titles
 def list_zettel():
@@ -23,6 +29,39 @@ def list_zettel():
             zettel = yaml.load(f, Loader=yaml.SafeLoader)
             lines += [{'ID': ID, 'LINE': ID+'  '+zettel['TITLE']}]
     return lines
+
+# increment letters in IDs, a -> b -> ... -> z -> aa -> ab -> ...
+def increment_letters(letters):
+    # convert letters to list of numbers a=0, ..., z=25
+    numbers = [ord(c)-97 for c in list(letters)][::-1]
+    for i in range(len(numbers)):
+        if numbers[i] < 25:
+            numbers[i] += 1
+            break
+        else: # carry
+            numbers[i] = 0
+    else: # carried all the way through, need to add another letter
+        numbers += [0]
+    # convert back to letters
+    letters = ''.join([chr(x+97) for x in numbers[::-1]])
+    return letters
+    
+# create a new zettel
+def new_zettel():
+    # find correct ID: YYMMDD followed by a, b, ..., z, aa, ab, ...
+    YYMMDD = datetime.date.today().isoformat().replace('-','')[2:]
+    IDs = sorted(os.listdir(path=kasten_dir)) # is there a faster way?
+    last = IDs[-1]
+    if last[:6] == YYMMDD:
+        # if it's the same YYMMDD as the last, increment letters
+        letters = increment_letters(last[6:])
+    ID = YYMMDD + letters
+
+    # open template file for editing
+    with open('/tmp/zettel.yaml', 'w') as f:
+        yaml.dump(zettel_template, f)
+    os.system('vim /tmp/zettel.yaml')
+    os.system(f'mv /tmp/zettel.yaml {kasten_dir}{ID}')
 
 
 class boofer():
@@ -83,6 +122,14 @@ class boofer():
             self.left()
         elif key == curses.KEY_RIGHT:
             self.right()
+        elif key == ord('+'): # add new zettel
+            new_zettel()
+            self.refresh()
+        elif key == ord('e'): # edit zettel under cursor
+            row, _ = self.screen.getyx()
+            ID = self.data[row]['ID']
+            os.system(f'vim {kasten_dir}{ID}')
+            self.refresh()
 
 
 def curses_main(screen):
