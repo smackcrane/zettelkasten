@@ -9,61 +9,14 @@
 
 import yaml
 import curses
+from curses import textpad
 import datetime
 import os
+import utils
+import config
+from Toc import Toc
 
-kasten_dir = "/home/sander/zettelkasten/kasten/"
-
-zettel_template = {
-        'TITLE': '',
-        'BODY' : ''
-        }
-
-# entry point: list of IDs and titles
-def list_zettel():
-    IDs = os.listdir(path=kasten_dir)
-
-    lines = []
-    for ID in IDs:
-        with open(kasten_dir+ID, 'r') as f:
-            zettel = yaml.load(f, Loader=yaml.SafeLoader)
-            lines += [{'ID': ID, 'LINE': ID+'  '+zettel['TITLE']}]
-    return lines
-
-# increment letters in IDs, a -> b -> ... -> z -> aa -> ab -> ...
-def increment_letters(letters):
-    # convert letters to list of numbers a=0, ..., z=25
-    numbers = [ord(c)-97 for c in list(letters)][::-1]
-    for i in range(len(numbers)):
-        if numbers[i] < 25:
-            numbers[i] += 1
-            break
-        else: # carry
-            numbers[i] = 0
-    else: # carried all the way through, need to add another letter
-        numbers += [0]
-    # convert back to letters
-    letters = ''.join([chr(x+97) for x in numbers[::-1]])
-    return letters
-    
-# create a new zettel
-def new_zettel():
-    # find correct ID: YYMMDD followed by a, b, ..., z, aa, ab, ...
-    YYMMDD = datetime.date.today().isoformat().replace('-','')[2:]
-    IDs = sorted(os.listdir(path=kasten_dir)) # is there a faster way?
-    last = IDs[-1]
-    if last[:6] == YYMMDD:
-        # if it's the same YYMMDD as the last, increment letters
-        letters = increment_letters(last[6:])
-    ID = YYMMDD + letters
-
-    # open template file for editing
-    with open('/tmp/zettel.yaml', 'w') as f:
-        yaml.dump(zettel_template, f)
-    os.system('vim /tmp/zettel.yaml')
-    os.system(f'mv /tmp/zettel.yaml {kasten_dir}{ID}')
-
-
+'''
 class boofer():
     def __init__(self, screen, data, rows, cols):
         self.screen = screen
@@ -128,18 +81,47 @@ class boofer():
         elif key == ord('e'): # edit zettel under cursor
             row, _ = self.screen.getyx()
             ID = self.data[row]['ID']
-            os.system(f'vim {kasten_dir}{ID}')
+            os.system(f'vim {config.kasten_dir}{ID}')
             self.refresh()
+'''
 
+def main(screen):
+    screen.refresh()
+    # list of windows/containers active on screen in order
+    wins = []
 
-def curses_main(screen):
-    boof = boofer(screen, [], curses.LINES, curses.COLS)
-    boof.go()
-    
-    k = 0
-    while k != ord('q'):
+    # create table of contents window and add it to wins list
+    wins.insert(0, Toc(curses.newwin(curses.LINES,curses.COLS)))
+
+    while True:
         k = screen.getch()
-        boof.keypress(k)
+        # handle special keys
+        if k == 17: # CRTL+Q
+            break
+        elif k <= 26:
+            pass
+        elif k == ord('+'):
+            # create new zettel
+            ID = utils.new_ID()
+            # open template for editing
+            template = config.template.replace('YYMMDDxx', ID)
+            # create a new window to edit in
+            editor = curses.newwin(
+                        curses.LINES//2, curses.COLS,
+                        curses.LINES//2, 0
+                        )
+            editor.addstr( 0,0, template)
+            curses.curs_set(1)
+            tp = curses.textpad.Textbox(editor)
+            contents = tp.edit()
+            # write to file
+            with open(config.kasten_dir+ID, 'w') as f:
+                f.write(contents)
+            # remove editing window
+            del editor
+            curses.curs_set(0)
+        else: # otherwise pass on keypress to active window
+            wins[0].keypress(k)
 
 if __name__ == '__main__':
-    curses.wrapper(curses_main)
+    curses.wrapper(main)
