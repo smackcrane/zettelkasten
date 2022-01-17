@@ -8,6 +8,7 @@
 import curses
 import time
 import sys
+from Keys import Keys
 
 debug_file = '/dev/pts/4'
 
@@ -228,19 +229,19 @@ class Editor:
 
     def keypress(self, k):
         flag, val = None, None
-        if k == curses.KEY_UP:      self.up()
-        elif k == curses.KEY_DOWN:  self.down()
-        elif k == curses.KEY_LEFT:  self.left()
-        elif k == curses.KEY_RIGHT: self.right()
-        elif k == 1:                self.line_beginning()   # CRTL+a
-        elif k == 5:                self.line_end()         # CRTL+e
-        elif k == 8:                self.backspace()        # backspace
-        elif k == 10:               self.newline()          # return
-        elif k == 17:               flag, val = self.quit() # CTRL+q
-        elif k == 19:               self.save()             # CTRL+s
-        elif k == 23:               self.save()             # CTRL+w
-        elif k == 525:  flag, val = 'window_down', None     # CTRL+down
-        elif k == 566:  flag, val = 'window_up', None       # CTRL+up
+        if k == Keys.UP:            self.up()
+        elif k == Keys.DOWN:        self.down()
+        elif k == Keys.LEFT:        self.left()
+        elif k == Keys.RIGHT:       self.right()
+        elif k == Keys.CTRL_a:      self.line_beginning()
+        elif k == Keys.CTRL_e:      self.line_end()
+        elif k == Keys.BACKSPACE:   self.backspace()
+        elif k == Keys.RETURN:      self.newline()
+        elif k == Keys.CTRL_q:      flag, val = self.quit()
+        elif k == Keys.CTRL_s:      self.save()
+        elif k == Keys.CTRL_w:      self.save()
+        elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
+        elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
         else:                       self.insert(k)
 
         return flag, val

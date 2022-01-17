@@ -10,6 +10,7 @@ import os
 import yaml
 import utils
 from config import kasten_dir
+from Keys import Keys
 
 class Toc:
     def __init__(self, win):
@@ -53,17 +54,16 @@ class Toc:
 
     def keypress(self, k):
         flag, val = None, None
-        if k == curses.KEY_UP:      self.up()
-        elif k == curses.KEY_DOWN:  self.down()
+        if k == Keys.UP:      self.up()
+        elif k == Keys.DOWN:  self.down()
         elif k == ord('r'):         self.update_list()
         elif k == ord('o'): flag, val = 'open', self.zett[self.row]['ID']
         elif k == ord('e'): flag, val = 'edit', self.zett[self.row]['ID']
         elif k == ord('+'): flag, val = 'new', None
-        elif k == 525:  flag, val = 'window_down', None
-        elif k == 566:  flag, val = 'window_up', None
+        elif k == Keys.CTRL_UP:  flag, val = 'window_up', None
+        elif k == Keys.CTRL_DOWN:  flag, val = 'window_down', None
 
         return flag, val
-
 
     def up(self):
         if self.row > 0:
