@@ -25,7 +25,7 @@ class Toc:
         # compile list of zettel IDs and titles
         self.zett = utils.list_IDs_titles()
 
-        # make cursor invisible and move to start of active row
+        # make cursor invisible
         curses.curs_set(0)
 
         self.refresh()
@@ -48,6 +48,7 @@ class Toc:
                 self.win.insstr( j,0, self.zett[i]['ID'], curses.A_REVERSE)
             else:
                 self.win.insstr( j,0, self.zett[i]['ID'].ljust(9))
+        curses.curs_set(0) # hide cursor
         self.win.refresh()
 
     def keypress(self, k):
