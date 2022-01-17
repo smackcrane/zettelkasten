@@ -45,14 +45,7 @@ class WindowStack:
         self.refresh()
 
     def keypress(self, k):
-        flag, val = None, None
-        if k == 566: # CTRL+up
-            self.up()
-        elif k == 525: # CTRL+down
-            self.down()
-        else:
-            flag, val = self.wins[-1].keypress(k)
-        return flag, val
+        return self.wins[-1].keypress(k)
 
 def main(screen):
     screen.refresh()
@@ -68,7 +61,6 @@ def main(screen):
         # and capture possible additional instructions
         flag, val = stack.keypress(k)
 
-        # TODO: pass control between windows, new and edit and quit
         if flag == 'new':
             # create new zettel
             ID = utils.new_zettel()
@@ -92,7 +84,10 @@ def main(screen):
             pass
         elif flag == 'quit':
             stack.pop()
-
+        elif flag == 'window_up':
+            stack.up()
+        elif flag == 'window_down':
+            stack.down()
 
 if __name__ == '__main__':
     curses.wrapper(main)

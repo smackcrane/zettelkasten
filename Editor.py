@@ -239,6 +239,8 @@ class Editor:
         elif k == 17:               flag, val = self.quit() # CTRL+q
         elif k == 19:               self.save()             # CTRL+s
         elif k == 23:               self.save()             # CTRL+w
+        elif k == 525:  flag, val = 'window_down', None     # CTRL+down
+        elif k == 566:  flag, val = 'window_up', None       # CTRL+up
         else:                       self.insert(k)
 
         return flag, val

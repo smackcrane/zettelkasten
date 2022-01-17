@@ -59,6 +59,8 @@ class Toc:
         elif k == ord('o'): flag, val = 'open', self.zett[self.row]['ID']
         elif k == ord('e'): flag, val = 'edit', self.zett[self.row]['ID']
         elif k == ord('+'): flag, val = 'new', None
+        elif k == 525:  flag, val = 'window_down', None
+        elif k == 566:  flag, val = 'window_up', None
 
         return flag, val
 
