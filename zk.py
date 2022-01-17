@@ -7,45 +7,12 @@
 #
 ############################################################################
 
-import yaml
 import curses
-from curses import textpad
-import datetime
-import os
 import utils
 import config
+from WindowStack import WindowStack
 from Toc import Toc
 from Editor import Editor
-
-# class with methods for working with multiple overlapping curses windows
-# TODO: everything broken if self.wins is empty
-class WindowStack:
-    def __init__(self):
-        # windows are stored in a list, index 0 at 'bottom' of stack
-        self.wins = []
-
-    def refresh(self):
-        for window in self.wins:
-            window.refresh()
-
-    def push(self, window):
-        self.wins.append(window)
-        self.refresh()
-
-    def pop(self):
-        self.wins.pop()
-        self.refresh()
-
-    def up(self):
-        self.wins.append(self.wins.pop(0))
-        self.refresh()
-
-    def down(self):
-        self.wins.insert(0, self.wins.pop())
-        self.refresh()
-
-    def keypress(self, k):
-        return self.wins[-1].keypress(k)
 
 def main(screen):
     screen.refresh()
