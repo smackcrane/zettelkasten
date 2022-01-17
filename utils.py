@@ -1,5 +1,3 @@
-#!/bin/python3
-
 ############################################################################
 #
 #   utils.py
@@ -10,7 +8,7 @@
 import yaml
 import datetime
 import os
-from config import kasten_dir
+from config import kasten_dir, template_file
 
 # entry point: list of IDs and titles
 def list_IDs_titles():
@@ -39,21 +37,27 @@ def increment_letters(letters):
     letters = ''.join([chr(x+97) for x in numbers[::-1]])
     return letters
     
-# create an ID for a new zettel
-def new_ID():
-    # YYMMDD followed by a, b, ..., z, aa, ab, ...
+# create a new zettel and return ID
+def new_zettel():
+    # find ID: YYMMDD followed by letters a, b, ..., z, aa, ab, ...
     YYMMDD = datetime.date.today().isoformat().replace('-','')[2:]
     IDs = sorted(os.listdir(path=kasten_dir)) # is there a faster way?
-    last = IDs[-1]
+    if len(IDs) > 0:
+        last = IDs[-1]
+    else:
+        last = ''
     if last[:6] == YYMMDD:
         # if it's the same YYMMDD as the last, increment letters
         letters = increment_letters(last[6:])
     else: # otherwise just start from the beginning
         letters = 'a'
-    return YYMMDD + letters
+    ID = YYMMDD + letters
 
-#    # open template file for editing
-#    with open('/tmp/zettel.yaml', 'w') as f:
-#        yaml.dump(zettel_template, f)
-#    os.system('vim /tmp/zettel.yaml')
-#    os.system(f'mv /tmp/zettel.yaml {kasten_dir}{ID}')
+    # create file from template
+    with open(template_file, 'r') as f:
+        template = f.read()
+    template = template.replace('YYMMDDxx', ID)
+    with open(kasten_dir+ID, 'w') as f:
+        f.write(template)
+
+    return ID

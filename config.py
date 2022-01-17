@@ -6,9 +6,4 @@
 ############################################################################
 
 kasten_dir = "/home/sander/zettelkasten/kasten/"
-template = """
-ID: YYMMDDxx
-TITLE: 
-
-BODY: 
-"""
+template_file = "/home/sander/zettelkasten/template.yaml"

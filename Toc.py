@@ -15,7 +15,7 @@ class Toc:
     def __init__(self, win):
         # curses window we're living in
         self.win = win
-        # dimensions of win (actually one less each)
+        # dimensions of window
         self.rows, self.cols = self.win.getmaxyx()
         # active 'cursor' row
         self.row = 0
@@ -41,7 +41,8 @@ class Toc:
             # i = row in zettel list, j = row in window
             j = i - self.top
             # add ID and title, highlighting ID on active row
-            self.win.addstr( j,0, self.zett[i]['TITLE'])
+            if self.zett[i]['TITLE']: # allow None title without error
+                self.win.addstr( j,0, self.zett[i]['TITLE'])
             if i == self.row:
                 self.win.insstr( j,0, ' '*(9-len(self.zett[i]['ID'])))
                 self.win.insstr( j,0, self.zett[i]['ID'], curses.A_REVERSE)
@@ -50,9 +51,15 @@ class Toc:
         self.win.refresh()
 
     def keypress(self, k):
+        flag, val = None, None
         if k == curses.KEY_UP:      self.up()
         elif k == curses.KEY_DOWN:  self.down()
         elif k == ord('r'):         self.update_list()
+        elif k == ord('o'): flag, val = 'open', self.zett[self.row]['ID']
+        elif k == ord('e'): flag, val = 'edit', self.zett[self.row]['ID']
+        elif k == ord('+'): flag, val = 'new', None
+
+        return flag, val
 
 
     def up(self):
@@ -68,4 +75,3 @@ class Toc:
         if self.top < self.row - self.rows:
             self.top = self.row - self.rows # scroll down if necessary
         self.refresh()
-
