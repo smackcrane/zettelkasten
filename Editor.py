@@ -250,29 +250,3 @@ class Editor:
         else:                       self.insert(k)
 
         return flag, val
-
-filepath = '/home/sander/zettelkasten/kasten/220113e'
-
-def main(screen):
-    screen.refresh()
-    try:
-        filepath = sys.argv[1]
-    except IndexError:
-        pass
-    with open(filepath, 'r') as f:
-        text = f.read()
-    editor = Editor(
-            curses.newwin(
-                curses.LINES//2,curses.COLS, curses.LINES//2,0
-                #5,10, curses.LINES//2,0
-                ),
-            filepath=filepath)
-
-    while True:
-        k = screen.getch()
-        flag, val = editor.keypress(k)
-        if flag == 'quit':
-            break
-
-if __name__ == '__main__':
-    curses.wrapper(main)
