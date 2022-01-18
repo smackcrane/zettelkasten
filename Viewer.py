@@ -51,7 +51,6 @@ class Viewer:
                 print(self.lines, file=f)
 
     def refresh(self):
-        self.debug_log('', state=True)
         self.win.erase()
 
         # i = row in self.lines, j = row in window
