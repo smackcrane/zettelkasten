@@ -55,7 +55,21 @@ class Editor:
     def refresh(self):
         self.win.erase()
 
-        # find self.top, top visible row
+        # first order of business: find self.top, top visible row
+        # automatically scroll up if there are empty lines at the bottom
+        #   and moving up a line would still fit
+        if self.top > 0:
+            buffer_rows = [
+                    max(1, -(len(line) // -self.cols) ) # ceiling division
+                    for line in self.lines[self.top-1:]
+                    ]
+            while sum(buffer_rows) < self.rows:
+                self.top -= 1
+                if self.top == 0:
+                    break
+                buffer_rows.insert(0,
+                        max(1, -(len(self.lines[self.top-1]) // -self.cols))
+                        )
         if self.row > self.top:  # if too high, gotta worry about wraps
             # just worry about getting the whole current line on screen
             # NOTE: this won't work nice if current line overflows window
