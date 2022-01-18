@@ -19,6 +19,9 @@ class WindowStack:
         rows, cols = screen.getmaxyx()
         self.dmap = np.zeros((rows, cols), np.int16)
 
+    def __len__(self):
+        return len(self.wins)
+
     def debug_log(self, s, state=False):
         debug_file = '/dev/pts/4'
         with open(debug_file, 'w') as f:

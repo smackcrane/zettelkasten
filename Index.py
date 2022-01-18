@@ -62,9 +62,10 @@ class Index:
         elif k == ord('r'):         self.update_list()
         elif k == ord('o'): flag, val = 'open', self.zett[self.row]['ID']
         elif k == ord('e'): flag, val = 'edit', self.zett[self.row]['ID']
-        elif k == ord('+'): flag, val = 'new', None
-        elif k == Keys.CTRL_UP:  flag, val = 'window_up', None
-        elif k == Keys.CTRL_DOWN:  flag, val = 'window_down', None
+        elif k == ord('+'):         flag, val = 'new', None
+        elif k == Keys.CTRL_q:      flag, val = 'quit', 'Index'
+        elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
+        elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
 
         return flag, val
 

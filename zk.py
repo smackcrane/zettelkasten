@@ -27,7 +27,7 @@ def main(screen):
     rows = min(15, curses.LINES//3)
     cols = min(60, 3*curses.COLS//4)
 
-    while True:
+    while stack:
         k = screen.getch()
         # pass keypress to active window
         # and capture possible additional instructions
@@ -56,7 +56,11 @@ def main(screen):
                 curses.newwin( rows,cols, y,x ),
                 config.kasten_dir+ID))
         elif flag == 'quit':
-            stack.pop()
+            if val == 'Index' and len(stack) > 1:
+                # don't kill index unless it's the last window
+                pass
+            else:
+                stack.pop()
         elif flag == 'window_up':
             stack.up()
         elif flag == 'window_down':
