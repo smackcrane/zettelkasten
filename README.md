@@ -8,10 +8,15 @@
 
 ### Table of Contents Window
 
-- Navigate with arrow keys
+- Navigate with up/down arrow keys
+- `o` to open zettel for viewing
 - `e` to open zettel for editing
 - `+` to create and edit new zettel
-- `r` to refresh list (after adding or changing zettel)
+- `r` to refresh list (after adding or editing zettel)
+
+### Viewer Window
+
+- Navigate with up/down arrow keys
 
 ### Editor Window
 

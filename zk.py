@@ -13,6 +13,7 @@ import config
 from WindowStack import WindowStack
 from Index import Index
 from Editor import Editor
+from Viewer import Viewer
 
 def main(screen):
     screen.refresh()
@@ -48,7 +49,12 @@ def main(screen):
                 curses.newwin( rows,cols, y,x ),
                 config.kasten_dir+ID))
         elif flag == 'open':
-            pass
+            ID = val # expect val to be ID of zettel to edit
+            # create a viewer
+            y, x = stack.recommend(rows, cols)
+            stack.push(Viewer(
+                curses.newwin( rows,cols, y,x ),
+                config.kasten_dir+ID))
         elif flag == 'quit':
             stack.pop()
         elif flag == 'window_up':
