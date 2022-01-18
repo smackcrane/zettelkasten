@@ -1,18 +1,15 @@
 ############################################################################
 #
-#   Toc.py
+#   Index.py
 #       table of contents curses window (container) for zettelkasten
 #
 ############################################################################
 
 import curses
-import os
-import yaml
 import utils
-from config import kasten_dir
 from Keys import Keys
 
-class Toc:
+class Index:
     def __init__(self, win):
         # curses window we're living in
         self.win = win

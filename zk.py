@@ -11,7 +11,7 @@ import curses
 import utils
 import config
 from WindowStack import WindowStack
-from Toc import Toc
+from Index import Index
 from Editor import Editor
 
 def main(screen):
@@ -20,7 +20,7 @@ def main(screen):
     stack = WindowStack()
 
     # create table of contents window and add it to wins stack
-    stack.push(Toc(curses.newwin(curses.LINES,curses.COLS)))
+    stack.push(Index(curses.newwin(curses.LINES,curses.COLS)))
 
     while True:
         k = screen.getch()
