@@ -41,7 +41,7 @@ class Index:
     def refresh(self):
         self.win.erase()
         # for each visible line
-        for i in range(self.top, min(self.top+self.rows+1, len(self.zett))):
+        for i in range(self.top, min(self.top+self.rows, len(self.zett))):
             # i = row in zettel list, j = row in window
             j = i - self.top
             # add ID and title, highlighting ID on active row
@@ -78,6 +78,6 @@ class Index:
     def down(self):
         if self.row < len(self.zett) - 1:
             self.row += 1       # move cursor line down
-        if self.top < self.row - self.rows:
-            self.top = self.row - self.rows # scroll down if necessary
+        if self.top + self.rows - 1 < self.row:
+            self.top = self.row - self.rows + 1 # scroll down if necessary
         self.refresh()
