@@ -28,6 +28,12 @@ class Index:
 
         self.refresh()
 
+    def getbegyx(self):
+        return self.win.getbegyx()
+
+    def getmaxyx(self):
+        return self.win.getmaxyx()
+
     def update_list(self):
         self.zett = utils.list_IDs_titles()
         self.refresh()

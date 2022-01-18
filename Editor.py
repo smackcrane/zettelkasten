@@ -10,8 +10,6 @@ import time
 import sys
 from Keys import Keys
 
-debug_file = '/dev/pts/4'
-
 class Editor:
     def __init__(self, win, filepath, row=0, col=0):
         # curses window we're living in
@@ -36,14 +34,21 @@ class Editor:
 
         self.refresh()
 
+    def getbegyx(self):
+        return self.win.getbegyx()
+
+    def getmaxyx(self):
+        return self.win.getmaxyx()
+
     def debug_log(self, s, state=False):
+        debug_file = '/dev/pts/4'
         with open(debug_file, 'w') as f:
             print(s, file=f)
             if state:
-                print(f'self.rows: {self.rows}\n'\
-                        + f'self.cols: {self.cols}\n'\
-                        + f'self.row: {self.row}\n'\
-                        + f'self.col: {self.col}\n'\
+                print(f'self.rows: {self.rows}\n'
+                        + f'self.cols: {self.cols}\n'
+                        + f'self.row: {self.row}\n'
+                        + f'self.col: {self.col}\n'
                         + f'self.top: {self.top}\n',
                         file=f)
 

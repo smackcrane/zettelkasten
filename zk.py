@@ -17,10 +17,14 @@ from Editor import Editor
 def main(screen):
     screen.refresh()
     # stack of windows/containers active on screen in order
-    stack = WindowStack()
+    stack = WindowStack(screen)
 
     # create table of contents window and add it to wins stack
     stack.push(Index(curses.newwin(curses.LINES,curses.COLS)))
+
+    # standard size for subwindows: at most quarter-screen, at most 15x60
+    rows = min(15, curses.LINES//3)
+    cols = min(60, 3*curses.COLS//4)
 
     while True:
         k = screen.getch()
@@ -32,20 +36,16 @@ def main(screen):
             # create new zettel
             ID = utils.new_zettel()
             # create an editor
+            y, x = stack.recommend(rows, cols)
             stack.push(Editor(
-                curses.newwin(
-                        curses.LINES//2, curses.COLS,
-                        curses.LINES//2, 0
-                        ),
+                curses.newwin( rows,cols, y,x ),
                 config.kasten_dir+ID))
         elif flag == 'edit':
             ID = val # expect val to be ID of zettel to edit
             # create an editor
+            y, x = stack.recommend(rows, cols)
             stack.push(Editor(
-                curses.newwin(
-                        curses.LINES//2, curses.COLS,
-                        curses.LINES//2, 0
-                        ),
+                curses.newwin( rows,cols, y,x ),
                 config.kasten_dir+ID))
         elif flag == 'open':
             pass
