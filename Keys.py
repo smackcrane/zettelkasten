@@ -9,9 +9,11 @@ class Keys:
     CTRL_a = 1
     CTRL_e = 5
     BACKSPACE = 8
+    TAB = 9
     RETURN = 10
     CTRL_q = 17
     CTRL_s = 19
     CTRL_w = 23
+    SPACE = 32
     CTRL_DOWN = 525
     CTRL_UP = 566

@@ -70,7 +70,14 @@ class Editor:
                 win_rows.pop(0)
                 moves += 1
             self.top += moves
-        if self.row < self.top: # if top is too low, simple
+            # check for edge case where cursor goes off the bottom
+            if sum(win_rows) == self.rows:
+                # current line goes to last row in window
+                if len(self.lines[self.row]) % self.cols == 0:
+                    # current line goes to last character in window
+                    # gotta move down one more line
+                    self.top += 1
+        if self.row < self.top: # if top is too low, it's simple
             self.top = self.row # move up to active row
 
         # write lines and find cursor position
@@ -181,6 +188,11 @@ class Editor:
             self.lines[self.row] += line
         self.refresh()
 
+    def tab(self):
+        # insert 4 spaces
+        for _ in range(4):
+            self.insert(Keys.SPACE)
+
     def newline(self):
         # split line in half
         first = self.lines[self.row][:self.col]
@@ -241,6 +253,7 @@ class Editor:
         elif k == Keys.CTRL_a:      self.line_beginning()
         elif k == Keys.CTRL_e:      self.line_end()
         elif k == Keys.BACKSPACE:   self.backspace()
+        elif k == Keys.TAB:         self.tab()
         elif k == Keys.RETURN:      self.newline()
         elif k == Keys.CTRL_q:      flag, val = self.quit()
         elif k == Keys.CTRL_s:      self.save()
