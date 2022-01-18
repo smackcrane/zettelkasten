@@ -36,12 +36,20 @@ def increment_letters(letters):
     # convert back to letters
     letters = ''.join([chr(x+97) for x in numbers[::-1]])
     return letters
-    
+
+# sort key for sorting IDs
+def ID_sort(ID):
+    YYMMDD = ID.rstrip('abcdefghijklmnopqrstuvwxyz')
+    letters = ID.lstrip('0123456789')
+    # in descending order of priority:
+    #   date, then number of letters, then lexicographic order of letters
+    return [YYMMDD, len(letters), letters]
+
 # create a new zettel and return ID
 def new_zettel():
     # find ID: YYMMDD followed by letters a, b, ..., z, aa, ab, ...
     YYMMDD = datetime.date.today().isoformat().replace('-','')[2:]
-    IDs = sorted(os.listdir(path=kasten_dir)) # is there a faster way?
+    IDs = sorted(os.listdir(path=kasten_dir), key=ID_sort)
     if len(IDs) > 0:
         last = IDs[-1]
     else:
