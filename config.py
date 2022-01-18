@@ -5,5 +5,7 @@
 #
 ############################################################################
 
-kasten_dir = "/home/sander/zettelkasten/kasten/"
-template_file = "/home/sander/zettelkasten/template.yaml"
+path = "/home/sander/zettelkasten/"
+
+kasten_dir = path + "kasten/"
+template_file = path + "template.yaml"
