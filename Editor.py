@@ -11,7 +11,7 @@ import sys
 from Keys import Keys
 
 class Editor:
-    def __init__(self, win, filepath, row=0, col=0):
+    def __init__(self, win, filepath, row=1, col=0):
         # curses window we're living in
         self.win = win
         # load text from file as a list of lines (without trailing newlines)
@@ -142,7 +142,7 @@ class Editor:
     # self.up/down/left/right just move relative to self.lines, cursor
     #   position and self.top are computed in self.refresh()
     def up(self):
-        if self.row > 0:
+        if self.row > 1:
             self.row -= 1
         # check if we're past the end of a line
         if self.col > len(self.lines[self.row]):
@@ -221,6 +221,25 @@ class Editor:
         self.hidden_col = self.col
         self.refresh()
 
+    def quit_to_viewer(self):
+        # check for changes by loading (& stripping) file text again
+        with open(self.filepath, 'r') as f:
+            file_text = f.readlines()
+        file_text = [line.rstrip('\n') for line in file_text]
+        # prompt if quit without saving
+        if self.lines != file_text:
+            self.win.insstr(0,0," Quit without saving? ",curses.A_REVERSE)
+            self.win.refresh()
+            k = self.win.getch()
+            if k != Keys.CTRL_o: # anything but CTRL+o, go back
+                self.refresh()
+                flag, val = None, None
+                return flag, val
+        # if no changes or confirmed above, proceed to viewer
+        ID = self.filepath.split('/')[-1] # extract ID from filepath
+        flag, val = 'edit->open', ID
+        return flag, val
+
     def quit(self):
         # check for changes by loading (& stripping) file text again
         with open(self.filepath, 'r') as f:
@@ -231,12 +250,11 @@ class Editor:
             self.win.insstr(0,0," Quit without saving? ",curses.A_REVERSE)
             self.win.refresh()
             k = self.win.getch()
-            if k != 17: # anything but CTRL+q, go back
+            if k != Keys.CTRL_q: # anything but CTRL+q, go back
                 self.refresh()
                 flag, val = None, None
                 return flag, val
         # if no changes or confirmed above, proceed to quit
-        # by returning flag to that effect
         flag, val = 'quit', None
         return flag, val
 
@@ -269,9 +287,7 @@ class Editor:
         elif k == Keys.BACKSPACE:   self.backspace()
         elif k == Keys.TAB:         self.tab()
         elif k == Keys.RETURN:      self.newline()
-        elif k == Keys.CTRL_o:
-            ID = self.filepath.split('/')[-1] # extract ID from filepath
-            flag, val = 'edit->open', ID
+        elif k == Keys.CTRL_o:      flag, val = self.quit_to_viewer()
         elif k == Keys.CTRL_q:      flag, val = self.quit()
         elif k == Keys.CTRL_s:      self.save()
         elif k == Keys.CTRL_w:      self.save()
