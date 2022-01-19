@@ -17,8 +17,12 @@ def list_IDs_titles():
     zett = []
     for ID in IDs:
         with open(kasten_dir+ID, 'r') as f:
-            zettel = yaml.load(f, Loader=yaml.SafeLoader)
-            zett += [{'ID': ID, 'TITLE': zettel['TITLE']}]
+            try:
+                zettel = yaml.load(f, Loader=yaml.SafeLoader)
+                zett += [{'ID': ID, 'TITLE': zettel['TITLE']}]
+            except yaml.scanner.ScannerError:
+                zett += [{'ID': ID,
+                    'TITLE': '-'*15+' HELP MY YAML IS BROKEN '+'-'*15}]
     return zett
 
 # increment letters in IDs, a -> b -> ... -> z -> aa -> ab -> ...
