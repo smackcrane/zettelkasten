@@ -52,6 +52,7 @@ class WindowStack:
         rows, cols = window.getmaxyx()
         self.dmap[y:y+rows, x:x+cols] -= 1
         self.refresh()
+        return window
 
     # recommend coordinates for a new window
     # takes rows, cols dimensions for a new window

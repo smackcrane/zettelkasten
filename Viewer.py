@@ -93,5 +93,8 @@ class Viewer:
         elif k == Keys.CTRL_q:      flag, val = 'quit', None
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
+        elif k == ord('e'):
+            ID = self.filepath.split('/')[-1] # extract ID from filepath
+            flag, val = 'open->edit', ID
 
         return flag, val

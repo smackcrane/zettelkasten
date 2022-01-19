@@ -55,6 +55,14 @@ def main(screen):
             stack.push(Viewer(
                 curses.newwin( rows,cols, y,x ),
                 config.kasten_dir+ID))
+        elif flag == 'edit->open': # change editor to viewer
+            ID = val # expect val to be ID of relevant zettel
+            window = stack.pop().win
+            stack.push(Viewer(window, config.kasten_dir+ID))
+        elif flag == 'open->edit': # change viewer to editor
+            ID = val # expect val to be ID of relevant zettel
+            window = stack.pop().win
+            stack.push(Editor(window, config.kasten_dir+ID))
         elif flag == 'quit':
             if val == 'Index' and len(stack) > 1:
                 # don't kill index unless it's the last window

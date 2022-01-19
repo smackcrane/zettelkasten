@@ -269,6 +269,9 @@ class Editor:
         elif k == Keys.BACKSPACE:   self.backspace()
         elif k == Keys.TAB:         self.tab()
         elif k == Keys.RETURN:      self.newline()
+        elif k == Keys.CTRL_o:
+            ID = self.filepath.split('/')[-1] # extract ID from filepath
+            flag, val = 'edit->open', ID
         elif k == Keys.CTRL_q:      flag, val = self.quit()
         elif k == Keys.CTRL_s:      self.save()
         elif k == Keys.CTRL_w:      self.save()
