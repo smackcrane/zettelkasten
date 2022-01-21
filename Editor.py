@@ -40,9 +40,9 @@ class Editor:
     def getmaxyx(self):
         return self.win.getmaxyx()
 
-    def debug_log(self, s, state=False):
-        debug_file = '/dev/pts/4'
-        with open(debug_file, 'w') as f:
+    def debugger(self, s, state=False):
+        log = '/dev/pts/2'
+        with open(log, 'w') as f:
             print(s, file=f)
             if state:
                 print(f'self.rows: {self.rows}\n'
@@ -63,7 +63,7 @@ class Editor:
                     max(1, -(len(line) // -self.cols) ) # ceiling division
                     for line in self.lines[self.top-1:]
                     ]
-            while sum(buffer_rows) < self.rows:
+            while sum(buffer_rows) <= self.rows:
                 self.top -= 1
                 if self.top == 0:
                     break
@@ -87,7 +87,8 @@ class Editor:
             # check for edge case where cursor goes off the bottom
             if sum(win_rows) == self.rows:
                 # current line goes to last row in window
-                if len(self.lines[self.row]) % self.cols == 0:
+                current_length = len(self.lines[self.row])
+                if current_length % self.cols == 0 and current_length > 0:
                     # current line goes to last character in window
                     # gotta move down one more line
                     self.top += 1
@@ -133,17 +134,17 @@ class Editor:
             # as noted above, if there's a single line that fills past the
             #   whole window, the current code will allow us to move outside
             #   the window and error
-            # for the moment just reset to something that won't error
-            self.col, self.hidden_col = 0,0
-            self.win.move(0,0)
+            pass
 
         self.win.refresh()
 
     # self.up/down/left/right just move relative to self.lines, cursor
     #   position and self.top are computed in self.refresh()
     def up(self):
-        if self.row > 1:
+        if self.row > 1: # don't allow cursor to move above row 1
             self.row -= 1
+        elif self.row == 1: # but do allow scrolling window to row 0
+            self.top = 0
         # check if we're past the end of a line
         if self.col > len(self.lines[self.row]):
             self.col = len(self.lines[self.row])
