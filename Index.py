@@ -74,6 +74,8 @@ class Index:
         flag, val = None, None
         if k == Keys.UP:            self.up()
         elif k == Keys.DOWN:        self.down()
+        elif k == Keys.CTRL_u:      self.halfpage_up()
+        elif k == Keys.CTRL_d:      self.halfpage_down()
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
         elif k == Keys.ESC: # end search and get rid of results
@@ -107,6 +109,18 @@ class Index:
     def down(self):
         if self.row < len(self.zett) - 1:
             self.row += 1       # move cursor line down
+        if self.top + self.rows - 1 < self.row:
+            self.top = self.row - self.rows + 1 # scroll down if necessary
+        self.refresh()
+
+    def halfpage_up(self):
+        self.row = max(self.row - curses.LINES//2, 0)
+        if self.top > self.row:
+            self.top = self.row # scroll up if necessary
+        self.refresh()
+
+    def halfpage_down(self):
+        self.row = min(self.row + curses.LINES//2, len(self.zett)-1)
         if self.top + self.rows - 1 < self.row:
             self.top = self.row - self.rows + 1 # scroll down if necessary
         self.refresh()

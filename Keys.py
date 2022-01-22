@@ -7,6 +7,7 @@ class Keys:
     LEFT = 260
     RIGHT = 261
     CTRL_a = 1
+    CTRL_d = 4
     CTRL_e = 5
     BACKSPACE = 8
     TAB = 9
@@ -14,6 +15,7 @@ class Keys:
     CTRL_o = 15
     CTRL_q = 17
     CTRL_s = 19
+    CTRL_u = 21
     CTRL_w = 23
     ESC = 27
     SPACE = 32
