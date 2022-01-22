@@ -14,14 +14,17 @@ from WindowStack import WindowStack
 from Index import Index
 from Editor import Editor
 from Viewer import Viewer
+from StatusBar import StatusBar
 
 def main(screen):
     screen.refresh()
     # stack of windows/containers active on screen in order
     stack = WindowStack(screen)
 
-    # create table of contents window and add it to wins stack
-    stack.push(Index(curses.newwin(curses.LINES,curses.COLS)))
+    # create index window and add it to wins stack
+    stack.push(Index(curses.newwin(curses.LINES-1,curses.COLS)))
+    # create status bar at bottom row, not in wins stack
+    status = StatusBar(curses.newwin( 1,curses.COLS, curses.LINES-1,0 ))
 
     # standard size for subwindows: at most quarter-screen, at most 15x60
     rows = min(15, curses.LINES//3)
@@ -31,6 +34,7 @@ def main(screen):
         k = screen.getch()
         # pass keypress to active window
         # and capture possible additional instructions
+        status.keypress(k)
         flag, val = stack.keypress(k)
 
         if flag == 'new':
@@ -63,6 +67,12 @@ def main(screen):
             ID = val # expect val to be ID of relevant zettel
             window = stack.pop().win
             stack.push(Editor(window, config.kasten_dir+ID))
+        elif flag == 'start_search':
+            status.start_search()
+        elif flag == 'end_search':
+            status.end_search()
+        elif flag == 'searching':
+            stack.wins[-1].search(status.search_text)
         elif flag == 'quit':
             if val == 'Index' and len(stack) > 1:
                 # don't kill index unless it's the last window

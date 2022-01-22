@@ -63,16 +63,19 @@ class WindowStack:
         #   columns gives an array whose entries are cumulative sum of the 
         #   rectangle between 0,0 and that entry
         rect_sums = self.dmap.cumsum(axis=0).cumsum(axis=1)
-        # then to get the mass of any rectangle, use inclusion-exclusion
-        #   bot/right-corner - u/r-corner - b/l-corner + u/l-corner
-        # can do this all at once by slicing
-        # pad with zeros to get edges to work out; np.r_ adds a row,
-        #   np.c_ adds a column
+        # pad with zeros to get edges to work out
+        #   np.r_ adds a row, np.c_ adds a column
         scr_rows, scr_cols = self.dmap.shape
         rect_sums = np.c_[
                 np.zeros((scr_rows+1), dtype=np.int16),
                 np.r_[ np.zeros((1,scr_cols), dtype=np.int16), rect_sums ]
                 ]
+        # delete bottom row so we don't overlap the status bar that should
+        #   be there
+        rect_sums = rect_sums[:-1,:]
+        # then to get the mass of any rectangle, use inclusion-exclusion
+        #   bot/right-corner - u/r-corner - b/l-corner + u/l-corner
+        # can do this all at once by slicing
         mass = (
                 rect_sums[rows:,cols:]      # bottom right corner
                 - rect_sums[:-rows,cols:]   # upper right corner

@@ -73,3 +73,22 @@ def new_zettel():
         f.write(template)
 
     return ID
+
+# search zettels for text, return list of ID & title dicts
+def search_IDs_titles(search_text):
+    IDs = os.listdir(path=kasten_dir)
+
+    zett = []
+    for ID in IDs:
+        with open(kasten_dir+ID, 'r') as f:
+            file_text = f.read()
+            # only add to the list if we found the search text
+            if search_text in file_text:
+                try:
+                    f.seek(0) # go back to beginning of file
+                    zettel = yaml.load(f, Loader=yaml.SafeLoader)
+                    zett += [{'ID': ID, 'TITLE': zettel['TITLE']}]
+                except yaml.scanner.ScannerError:
+                    zett += [{'ID': ID,
+                        'TITLE': '-'*15+' HELP MY YAML IS BROKEN '+'-'*15}]
+    return zett

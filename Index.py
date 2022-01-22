@@ -19,6 +19,8 @@ class Index:
         self.row = 0
         # top row in view
         self.top = 0
+        # flag for search in progress
+        self.searching = False
         
         # compile list of zettel IDs and titles
         self.zett = utils.list_IDs_titles()
@@ -34,6 +36,19 @@ class Index:
     def getmaxyx(self):
         return self.win.getmaxyx()
 
+    def start_search(self):
+        self.searching = True
+
+    def end_search(self):
+        self.searching = False
+
+    def search(self, text):
+        self.zett = utils.search_IDs_titles(text)
+        self.top = 0 # make sure we see search results
+        if self.row >= len(self.zett): # move cursor up if it fell off
+            self.row = max(0, len(self.zett) - 1)
+        self.refresh()
+
     def update_list(self):
         self.zett = utils.list_IDs_titles()
         self.refresh()
@@ -46,7 +61,7 @@ class Index:
             j = i - self.top
             # add ID and title, highlighting ID on active row
             if self.zett[i]['TITLE']: # allow None title without error
-                self.win.addstr( j,0, self.zett[i]['TITLE'])
+                self.win.insstr( j,0, self.zett[i]['TITLE'])
             if i == self.row:
                 self.win.insstr( j,0, ' '*(9-len(self.zett[i]['ID'])))
                 self.win.insstr( j,0, self.zett[i]['ID'], curses.A_REVERSE)
@@ -57,15 +72,28 @@ class Index:
 
     def keypress(self, k):
         flag, val = None, None
-        if k == Keys.UP:      self.up()
-        elif k == Keys.DOWN:  self.down()
+        if k == Keys.UP:            self.up()
+        elif k == Keys.DOWN:        self.down()
+        elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
+        elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
+        elif k == Keys.ESC: # end search and get rid of results
+            self.end_search()
+            self.update_list()
+            flag, val = 'end_search', None
+        elif k == Keys.RETURN: # end search and keep results
+            self.end_search()
+            flag, val = 'end_search', None
+        elif self.searching:
+            # only allow commands above this point while searching
+            flag, val = 'searching', None
         elif k == ord('r'):         self.update_list()
         elif k == ord('o'): flag, val = 'open', self.zett[self.row]['ID']
         elif k == ord('e'): flag, val = 'edit', self.zett[self.row]['ID']
         elif k == ord('+'):         flag, val = 'new', None
+        elif k == ord('/'):
+            self.start_search()
+            flag, val = 'start_search', None
         elif k == Keys.CTRL_q:      flag, val = 'quit', 'Index'
-        elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
-        elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
 
         return flag, val
 

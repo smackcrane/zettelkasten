@@ -15,6 +15,7 @@ class Keys:
     CTRL_q = 17
     CTRL_s = 19
     CTRL_w = 23
+    ESC = 27
     SPACE = 32
     CTRL_DOWN = 525
     CTRL_UP = 566
