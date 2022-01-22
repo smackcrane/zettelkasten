@@ -6,13 +6,14 @@
 
 - `CTRL+UP` and `CTRL+DOWN` to cycle through windows
 
-### Table of Contents Window
+### Index Window
 
 - Navigate with up/down arrow keys
 - `o` to open zettel for viewing
 - `e` to open zettel for editing
 - `+` to create and edit new zettel
 - `r` to refresh list (after adding or editing zettel)
+- `/` to start a search, then type search query, then `RETURN` to interact with search results or `ESC` to cancel search
 
 ### Viewer Window
 
