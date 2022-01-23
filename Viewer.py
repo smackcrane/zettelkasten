@@ -42,6 +42,8 @@ class Viewer:
                     'row': row,
                     'col': col
                     })
+        # keep track of which link cursor is on (default -1 means none)
+        self.link = -1
 
         # top line of text visible
         self.top = 0
@@ -74,13 +76,23 @@ class Viewer:
             j = i - self.top
             self.win.insstr( j,0, self.lines[i])
         # underline links
-        for link in self.links:
+        for i, link in enumerate(self.links):
             # assume a link is broken over at most two lines
             breakpt = self.cols - link['col']
-            self.win.addstr( link['row'],link['col'],
-                    link['ID'][:breakpt], curses.A_UNDERLINE )
-            self.win.addstr( link['row']+1,0,
-                    link['ID'][breakpt:], curses.A_UNDERLINE )
+            if i == self.link: # highlight link under cursor
+                attr = curses.A_REVERSE
+            else: # underline links in general
+                attr = curses.A_UNDERLINE
+            row = link['row'] - self.top
+            try:
+                if 0 <= row < self.rows:
+                    self.win.addstr( row,link['col'],
+                            link['ID'][:breakpt], attr )
+                if 0 <= row + 1 < self.rows:
+                    self.win.addstr( row+1,0,
+                            link['ID'][breakpt:], attr )
+            except:     # painting the lower right corner raises error
+                pass    # but only after painting, so just ignore error
         # hide cursor
         curses.curs_set(0)
 
@@ -99,10 +111,26 @@ class Viewer:
         self.refresh()
 
     def left(self):
-        pass
+        if not self.links or self.link == -1:
+            return # if no links or no active link, do nothing
+        if self.link > 0:
+            self.link -= 1
+        # move up if necessary to see the link
+        if self.top > self.links[self.link]['row']:
+            self.top = self.links[self.link]['row']
+        self.refresh()
 
     def right(self):
-        pass
+        if not self.links: # if no links, do nothing
+            return
+        if self.link < len(self.links) - 1:
+            self.link += 1
+        # move down if necessary to see the link
+        l = self.links[self.link]
+        bottom = l['row'] + ( (l['col']+len(l['ID'])-1) // self.cols )
+        while self.top + self.rows <= bottom:
+            self.top += 1
+        self.refresh()
 
     def enter(self):
         pass
