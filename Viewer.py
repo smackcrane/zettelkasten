@@ -142,7 +142,12 @@ class Viewer:
         return flag, val
 
     def enter(self):
-        pass
+        # open active link for viewing
+        if self.link == -1:
+            return None, None
+        ID = self.links[self.link]['ID'].lstrip('#')
+        flag, val = 'open', ID
+        return flag, val
 
     def keypress(self, k):
         flag, val = None, None
@@ -150,7 +155,7 @@ class Viewer:
         elif k == Keys.DOWN:        self.down()
         elif k == Keys.LEFT:        flag, val = self.left()
         elif k == Keys.RIGHT:       flag, val = self.right()
-        elif k == Keys.RETURN:      self.enter()
+        elif k == Keys.RETURN:      flag, val = self.enter()
         elif k == Keys.CTRL_q:      flag, val = 'quit', None
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
