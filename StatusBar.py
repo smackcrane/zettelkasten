@@ -25,12 +25,6 @@ class StatusBar:
 
         self.refresh()
 
-    def getbegyx(self):
-        return self.win.getbegyx()
-
-    def getmaxyx(self):
-        return self.win.getmaxyx()
-
     def refresh(self):
         self.win.erase()
         curses.curs_set(0) # hide cursor
@@ -41,6 +35,10 @@ class StatusBar:
         display += ' '*curses.COLS # pad with spaces to light up whole bar
         self.win.insstr( 0,0, display, self.attr )
         self.win.refresh()
+
+    def set(self, text):
+        self.text = text
+        self.refresh()
 
     def start_search(self):
         self.searching = True

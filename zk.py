@@ -73,6 +73,8 @@ def main(screen):
             status.end_search()
         elif flag == 'searching':
             stack.wins[-1].search(status.search_text)
+        elif flag == 'status':
+            status.set(val) # set text in status bar
         elif flag == 'quit':
             if val == 'Index' and len(stack) > 1:
                 # don't kill index unless it's the last window

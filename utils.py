@@ -25,6 +25,18 @@ def list_IDs_titles():
                     'TITLE': '-'*15+' HELP MY YAML IS BROKEN '+'-'*15}]
     return zett
 
+# load zettel from ID
+def load_zettel(ID):
+    with open(kasten_dir+ID, 'r') as f:
+            try:
+                zettel = yaml.load(f, Loader=yaml.SafeLoader)
+            except yaml.scanner.ScannerError:
+                zettel = {'ID': ID,
+                        'TITLE': 'HELP MY YAML IS BROKEN',
+                        'BODY': 'HELP MY YAML IS BROKEN'
+                        }
+    return zettel
+
 # increment letters in IDs, a -> b -> ... -> z -> aa -> ab -> ...
 def increment_letters(letters):
     # convert letters to list of numbers a=0, ..., z=25

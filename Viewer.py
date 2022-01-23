@@ -9,6 +9,7 @@ import curses
 import re
 import time
 import sys
+import utils
 from Keys import Keys
 
 class Viewer:
@@ -112,17 +113,21 @@ class Viewer:
 
     def left(self):
         if not self.links or self.link == -1:
-            return # if no links or no active link, do nothing
+            return None, None # if no links or no active link, do nothing
         if self.link > 0:
             self.link -= 1
         # move up if necessary to see the link
         if self.top > self.links[self.link]['row']:
             self.top = self.links[self.link]['row']
         self.refresh()
+        ID = self.links[self.link]['ID'].lstrip('#')
+        title = utils.load_zettel(ID)['TITLE']
+        flag, val = 'status', '#'+ID+' '+title
+        return flag, val
 
     def right(self):
         if not self.links: # if no links, do nothing
-            return
+            return None, None
         if self.link < len(self.links) - 1:
             self.link += 1
         # move down if necessary to see the link
@@ -131,6 +136,10 @@ class Viewer:
         while self.top + self.rows <= bottom:
             self.top += 1
         self.refresh()
+        ID = self.links[self.link]['ID'].lstrip('#')
+        title = utils.load_zettel(ID)['TITLE']
+        flag, val = 'status', '#'+ID+' '+title
+        return flag, val
 
     def enter(self):
         pass
@@ -139,8 +148,8 @@ class Viewer:
         flag, val = None, None
         if k == Keys.UP:            self.up()
         elif k == Keys.DOWN:        self.down()
-        elif k == Keys.LEFT:        self.left()
-        elif k == Keys.RIGHT:       self.right()
+        elif k == Keys.LEFT:        flag, val = self.left()
+        elif k == Keys.RIGHT:       flag, val = self.right()
         elif k == Keys.RETURN:      self.enter()
         elif k == Keys.CTRL_q:      flag, val = 'quit', None
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
