@@ -6,6 +6,7 @@
 ############################################################################
 
 import curses
+import re
 import time
 import sys
 from Keys import Keys
@@ -20,12 +21,27 @@ class Viewer:
         #   then break into lines of window length
         self.filepath = filepath
         with open(self.filepath, 'r') as f:
-            lines = f.readlines()
-        lines = [line.rstrip('\n') for line in lines] # strip newlines
+            raw_lines = f.readlines()
+        raw_lines = [line.rstrip('\n') for line in raw_lines]
         self.lines = []
-        for line in lines:
+        line_lengths = [] # to translate between raw_lines and self.lines
+        for line in raw_lines:
+            line_lengths.append(-(len(line) // -self.cols)) # ceiling div
             for x in range(0, len(line), self.cols):
                 self.lines.append(line[x:x+self.cols])
+
+        # create list of links, each a dict of ID and start coords
+        ref = re.compile(r'#\d+[a-z]+')
+        self.links = []
+        for i, line in enumerate(raw_lines):
+            for link in ref.finditer(line):
+                row = sum(line_lengths[:i]) + (link.start() // self.cols)
+                col = link.start() % self.cols
+                self.links.append({
+                    'ID': link.group(),
+                    'row': row,
+                    'col': col
+                    })
 
         # top line of text visible
         self.top = 0
@@ -38,9 +54,9 @@ class Viewer:
     def getmaxyx(self):
         return self.win.getmaxyx()
 
-    def debug_log(self, s, state=False):
-        debug_file = '/dev/pts/4'
-        with open(debug_file, 'w') as f:
+    def debugger(self, s, state=False):
+        log_file = '/dev/pts/1'
+        with open(log_file, 'w') as f:
             print(s, file=f)
             if state:
                 print(f'self.filepath: {self.filepath}\n'
@@ -57,6 +73,14 @@ class Viewer:
         for i in range(self.top, min(self.top+self.rows,len(self.lines))):
             j = i - self.top
             self.win.insstr( j,0, self.lines[i])
+        # underline links
+        for link in self.links:
+            # assume a link is broken over at most two lines
+            breakpt = self.cols - link['col']
+            self.win.addstr( link['row'],link['col'],
+                    link['ID'][:breakpt], curses.A_UNDERLINE )
+            self.win.addstr( link['row']+1,0,
+                    link['ID'][breakpt:], curses.A_UNDERLINE )
         # hide cursor
         curses.curs_set(0)
 
