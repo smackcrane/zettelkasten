@@ -19,5 +19,7 @@ class Keys:
     CTRL_w = 23
     ESC = 27
     SPACE = 32
+    SHIFT_LEFT = 393
+    SHIFT_RIGHT = 402
     CTRL_DOWN = 525
     CTRL_UP = 566

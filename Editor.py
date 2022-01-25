@@ -176,6 +176,28 @@ class Editor:
         self.hidden_col = self.col  # reset hidden_col
         self.refresh()
 
+    def backward(self):
+        # jump back a word (i.e. to the last space)
+        col = self.lines[self.row].rfind(' ', 0, self.col)
+        if col == -1: # if no space before self.col
+            self.col = 0
+            self.hidden_col = self.col
+        else:
+            self.col = col
+            self.hidden_col = self.col
+        self.refresh()
+
+    def forward(self):
+        # jump forward a word (i.e. to the next space)
+        col = self.lines[self.row].find(' ', self.col+1)
+        if col == -1:
+            self.col = len(self.lines[self.row])-1
+            self.hidden_col = self.col
+        else:
+            self.col = col
+            self.hidden_col = self.col
+        self.refresh()
+
     def line_beginning(self):
         self.col = 0
         self.hidden_col = self.col  # reset hidden_col
@@ -283,6 +305,8 @@ class Editor:
         elif k == Keys.DOWN:        self.down()
         elif k == Keys.LEFT:        self.left()
         elif k == Keys.RIGHT:       self.right()
+        elif k == Keys.SHIFT_LEFT:  self.backward()
+        elif k == Keys.SHIFT_RIGHT: self.forward()
         elif k == Keys.CTRL_a:      self.line_beginning()
         elif k == Keys.CTRL_e:      self.line_end()
         elif k == Keys.BACKSPACE:   self.backspace()
