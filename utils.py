@@ -27,14 +27,18 @@ def list_IDs_titles():
 
 # load zettel from ID
 def load_zettel(ID):
-    with open(kasten_dir+ID, 'r') as f:
-            try:
+    try:
+        with open(kasten_dir+ID, 'r') as f:
                 zettel = yaml.load(f, Loader=yaml.SafeLoader)
-            except yaml.scanner.ScannerError:
-                zettel = {'ID': ID,
-                        'TITLE': 'HELP MY YAML IS BROKEN',
-                        'BODY': 'HELP MY YAML IS BROKEN'
-                        }
+    except Exception as e:
+        zettel = {'ID': ID,
+                'TITLE': str(e),
+                'BODY': str(e)}
+    # insist on returning string title and body
+    if 'TITLE' not in zettel or not isinstance(zettel['TITLE'], str):
+        zettel['TITLE'] = ''
+    if 'BODY' not in zettel or not isinstance(zettel['BODY'], str):
+        zettel['BODY'] = ''
     return zettel
 
 # increment letters in IDs, a -> b -> ... -> z -> aa -> ab -> ...
