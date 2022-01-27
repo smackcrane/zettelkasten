@@ -12,6 +12,7 @@ class Keys:
     BACKSPACE = 8
     TAB = 9
     RETURN = 10
+    CTRL_n = 14
     CTRL_o = 15
     CTRL_q = 17
     CTRL_s = 19

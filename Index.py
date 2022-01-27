@@ -92,6 +92,7 @@ class Index:
         elif k == ord('o'): flag, val = 'open', self.zett[self.row]['ID']
         elif k == ord('e'): flag, val = 'edit', self.zett[self.row]['ID']
         elif k == ord('+'):         flag, val = 'new', None
+        elif k == Keys.CTRL_n:      flag, val = 'new', None
         elif k == ord('/'):
             self.start_search()
             flag, val = 'start_search', None

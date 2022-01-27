@@ -11,7 +11,7 @@
 - Navigate with `UP`/`DOWN` arrow keys
 - `o` to open zettel for viewing
 - `e` to open zettel for editing
-- `+` to create and edit new zettel
+- `CTRL+n` to create and edit new zettel
 - `r` to refresh list (after adding or editing zettel)
 - `/` to start a search, then type search query, then `ENTER` to interact with search results or `ESC` to cancel search
 
@@ -21,14 +21,17 @@
 - Select links with `LEFT`/`RIGHT` arrow keys
 - `e` to change to editing
 - `ENTER` to open selected link for viewing
+- `CTRL+n` to create and edit new zettel
 
 ### Editor Window
 
 - Type to insert text
+- Zettel must be written in proper YAML
 - `CTRL+a` to jump to beginning of line, `CTRL+e` to jump to end
 - `CTRL+s` or `CTRL+w` to save
 - `CTRL+q` to close
 - `CTRL+o` to change to viewing
+- `CTRL+n` to create and edit new zettel
 
 ## Setup
 
