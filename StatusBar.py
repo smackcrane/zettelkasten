@@ -114,3 +114,7 @@ class StatusBar:
             self.echo(k)
 
         return flag, val
+
+    def error(self, e):
+        self.text = 'ERROR: ' + str(e)
+        self.refresh()

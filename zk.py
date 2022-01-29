@@ -31,66 +31,69 @@ def main(screen):
     cols = min(60, 3*curses.COLS//4)
 
     while stack:
-        k = screen.getch()
-        # pass keypress to active window
-        # and capture possible additional instructions
-        status.keypress(k)
-        flag, val = stack.keypress(k)
+        try:    # general error handling
+            k = screen.getch()
+            # pass keypress to active window
+            # and capture possible additional instructions
+            status.keypress(k)
+            flag, val = stack.keypress(k)
 
-        if flag == 'new':
-            # create new zettel
-            ID = utils.new_zettel()
-            # create an editor
-            y, x = stack.recommend(rows, cols)
-            stack.push(Editor(
-                curses.newwin( rows,cols, y,x ),
-                config.kasten_dir+ID))
-        elif flag == 'edit':
-            ID = val # expect val to be ID of zettel to edit
-            # create an editor
-            y, x = stack.recommend(rows, cols)
-            stack.push(Editor(
-                curses.newwin( rows,cols, y,x ),
-                config.kasten_dir+ID))
-        elif flag == 'open':
-            ID = val # expect val to be ID of zettel to edit
-            # create a viewer
-            y, x = stack.recommend(rows, cols)
-            stack.push(Viewer(
-                curses.newwin( rows,cols, y,x ),
-                config.kasten_dir+ID))
-        elif flag == 'edit->open': # change editor to viewer
-            ID = val # expect val to be ID of relevant zettel
-            window = stack.pop().win
-            stack.push(Viewer(window, config.kasten_dir+ID))
-        elif flag == 'open->edit': # change viewer to editor
-            ID = val # expect val to be ID of relevant zettel
-            window = stack.pop().win
-            stack.push(Editor(window, config.kasten_dir+ID))
-        elif flag == 'start_search':
-            status.start_search()
-        elif flag == 'end_search':
-            status.end_search()
-        elif flag == 'searching':
-            stack.wins[-1].search(status.search_text)
-        elif flag == 'start_command':
-            status.start_command()
-        elif flag == 'end_command':
-            status.end_command()
-        elif flag == 'exec_command':
-            status.exec_command()
-        elif flag == 'status':
-            status.set(val) # set text in status bar
-        elif flag == 'quit':
-            if val == 'Index' and len(stack) > 1:
-                # don't kill index unless it's the last window
-                pass
-            else:
-                stack.pop()
-        elif flag == 'window_up':
-            stack.up()
-        elif flag == 'window_down':
-            stack.down()
+            if flag == 'new':
+                # create new zettel
+                ID = utils.new_zettel()
+                # create an editor
+                y, x = stack.recommend(rows, cols)
+                stack.push(Editor(
+                    curses.newwin( rows,cols, y,x ),
+                    config.kasten_dir+ID))
+            elif flag == 'edit':
+                ID = val # expect val to be ID of zettel to edit
+                # create an editor
+                y, x = stack.recommend(rows, cols)
+                stack.push(Editor(
+                    curses.newwin( rows,cols, y,x ),
+                    config.kasten_dir+ID))
+            elif flag == 'open':
+                ID = val # expect val to be ID of zettel to edit
+                # create a viewer
+                y, x = stack.recommend(rows, cols)
+                stack.push(Viewer(
+                    curses.newwin( rows,cols, y,x ),
+                    config.kasten_dir+ID))
+            elif flag == 'edit->open': # change editor to viewer
+                ID = val # expect val to be ID of relevant zettel
+                window = stack.pop().win
+                stack.push(Viewer(window, config.kasten_dir+ID))
+            elif flag == 'open->edit': # change viewer to editor
+                ID = val # expect val to be ID of relevant zettel
+                window = stack.pop().win
+                stack.push(Editor(window, config.kasten_dir+ID))
+            elif flag == 'start_search':
+                status.start_search()
+            elif flag == 'end_search':
+                status.end_search()
+            elif flag == 'searching':
+                stack.wins[-1].search(status.search_text)
+            elif flag == 'start_command':
+                status.start_command()
+            elif flag == 'end_command':
+                status.end_command()
+            elif flag == 'exec_command':
+                status.exec_command()
+            elif flag == 'status':
+                status.set(val) # set text in status bar
+            elif flag == 'quit':
+                if val == 'Index' and len(stack) > 1:
+                    # don't kill index unless it's the last window
+                    pass
+                else:
+                    stack.pop()
+            elif flag == 'window_up':
+                stack.up()
+            elif flag == 'window_down':
+                stack.down()
+        except Exception as e:
+            status.error(e)
 
 if __name__ == '__main__':
     curses.wrapper(main)
