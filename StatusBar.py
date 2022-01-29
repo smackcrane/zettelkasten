@@ -6,6 +6,7 @@
 ############################################################################
 
 import curses
+import utils
 from Keys import Keys
 
 class StatusBar:
@@ -18,10 +19,14 @@ class StatusBar:
         self.text = ''
         # search text when searching
         self.search_text = ''
+        # command text when commanding
+        self.command_text = ''
         # attribute for display, default reverse for contrast
         self.attr = curses.A_REVERSE
         # flag for search in progress
         self.searching = False
+        # flag for command in progress
+        self.command_mode = False
 
         self.refresh()
 
@@ -49,6 +54,31 @@ class StatusBar:
         self.text = ''
         self.refresh()
 
+    def start_command(self):
+        self.command_mode = True
+        self.command_text = ''
+
+    def end_command(self):
+        self.command_mode = False
+        self.text = ''
+        self.refresh()
+
+    def exec_command(self):
+        self.command_mode = False
+        self.text = ''
+        if self.command_text == 'protograph':
+            self.text = 'protographing ...'
+            self.refresh()
+            try:
+                utils.protograph()
+                self.text = ''
+            except Exception as e:
+                self.text = 'ERROR: ' + str(e)
+        else:
+            self.text = f'command "{self.command_text}" not recognized'
+        self.refresh()
+
+
     def echo(self, k):
         s = ''
         # search known keys to see if we have a name for it
@@ -71,13 +101,14 @@ class StatusBar:
         elif 32 <= k <= 126: # only include "regular" characters
             self.text += chr(k)
             self.search_text += chr(k)
+            self.command_text += chr(k)
         self.refresh()
 
     def keypress(self, k):
         flag, val = None, None
         if k == Keys.ESC:
             self.end_search()
-        elif self.searching:
+        elif self.searching or self.command_mode:
             self.insert(k)
         else:
             self.echo(k)

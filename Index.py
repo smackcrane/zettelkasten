@@ -21,6 +21,8 @@ class Index:
         self.top = 0
         # flag for search in progress
         self.searching = False
+        # flag for command in progress
+        self.command_mode = False
         
         # compile list of zettel IDs and titles
         self.zett = utils.list_IDs_titles()
@@ -48,6 +50,12 @@ class Index:
         if self.row >= len(self.zett): # move cursor up if it fell off
             self.row = max(0, len(self.zett) - 1)
         self.refresh()
+
+    def start_command(self):
+        self.command_mode = True
+
+    def end_command(self):
+        self.command_mode = False
 
     def update_list(self):
         self.zett = utils.list_IDs_titles()
@@ -79,15 +87,26 @@ class Index:
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
         elif k == Keys.ESC: # end search and get rid of results
-            self.end_search()
-            self.update_list()
-            flag, val = 'end_search', None
+            if self.searching:
+                self.end_search()
+                self.update_list()
+                flag, val = 'end_search', None
+            elif self.command_mode:
+                self.end_command()
+                flag, val = 'end_command', None
         elif k == Keys.RETURN: # end search and keep results
-            self.end_search()
-            flag, val = 'end_search', None
+            if self.searching:
+                self.end_search()
+                flag, val = 'end_search', None
+            elif self.command_mode:
+                self.end_command()
+                flag, val = 'exec_command', None
         elif self.searching:
-            # only allow commands above this point while searching
+            # only allow keys above this point while searching
             flag, val = 'searching', None
+        elif self.command_mode:
+            # only allow keys above this point in command mode
+            flag, val = 'command', None
         elif k == ord('r'):         self.update_list()
         elif k == ord('o'): flag, val = 'open', self.zett[self.row]['ID']
         elif k == ord('e'): flag, val = 'edit', self.zett[self.row]['ID']
@@ -96,6 +115,9 @@ class Index:
         elif k == ord('/'):
             self.start_search()
             flag, val = 'start_search', None
+        elif k == ord(':'):
+            self.start_command()
+            flag, val = 'start_command', None
         elif k == Keys.CTRL_q:      flag, val = 'quit', 'Index'
 
         return flag, val

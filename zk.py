@@ -73,6 +73,12 @@ def main(screen):
             status.end_search()
         elif flag == 'searching':
             stack.wins[-1].search(status.search_text)
+        elif flag == 'start_command':
+            status.start_command()
+        elif flag == 'end_command':
+            status.end_command()
+        elif flag == 'exec_command':
+            status.exec_command()
         elif flag == 'status':
             status.set(val) # set text in status bar
         elif flag == 'quit':

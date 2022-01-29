@@ -7,6 +7,7 @@
 
 import yaml
 import datetime
+import re
 import os
 from config import kasten_dir, template_file
 
@@ -108,3 +109,35 @@ def search_IDs_titles(search_text):
                     zett += [{'ID': ID,
                         'TITLE': '-'*15+' HELP MY YAML IS BROKEN '+'-'*15}]
     return zett
+
+# generate graph using protograph
+def protograph():
+    IDs = os.listdir(kasten_dir)
+    link = re.compile(r'#\d+[a-z]+')    # regex to match links in notes
+    node_list = []
+    edge_list = []
+    for i, ID in enumerate(IDs):
+        with open(kasten_dir+ID, 'r') as f:
+            text = f.read()     # grab text to search for links
+            f.seek(0)
+            try:                # grab data to extract title
+                data = yaml.load(f, Loader=yaml.SafeLoader)
+            except yaml.scanner.ScannerError:
+                data = {'TITLE': '--BROKEN YAML--'}
+        # add node with ID and title to list in protograph format
+        node_list.append(f'node {ID} --hovertext {data["TITLE"]}')
+        # for each link
+        for link_ID in link.findall(text):
+            # get node number of linked zettel
+            j = IDs.index(link_ID.lstrip('#'))  # (get rid of leading hash)
+            # add edge to list in protograph format
+            edge_list.append(f'edge {i+1} {j+1}') # recall pg indexes by 1
+    # set commands to define nodes, define edges, then render
+    commands = '\n'.join(node_list + edge_list + ['render'])
+    commands += '\n'    # file-end newline for unix happiness
+    # write to temp file
+    temp_file = '/tmp/zk_to_pg.txt'
+    with open(temp_file, 'w') as f:
+        f.write(commands)
+    # call pg on temp file
+    os.system(f'pg -f {temp_file} >/dev/null 2>&1')

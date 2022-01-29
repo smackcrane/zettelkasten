@@ -14,6 +14,8 @@
 - `CTRL+n` to create and edit new zettel
 - `r` to refresh list (after adding or editing zettel)
 - `/` to start a search, then type search query, then `ENTER` to interact with search results or `ESC` to cancel search
+- `:` to start a command, then type command, then `ENTER` to execute or `ESC` to cancel. Recognized commands:
+    - `protograph` to visualize zettel network using [amackcrane/protograph](https://github.com/amackcrane/protograph)
 
 ### Viewer Window
 
