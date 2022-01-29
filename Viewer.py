@@ -43,9 +43,26 @@ class Viewer:
                     'row': row,
                     'col': col
                     })
+
+        # search for backlinks
+        my_ID = self.filepath.split('/')[-1]
+        backlinks = utils.list_backlinks(my_ID)
+        if backlinks:
+            self.lines += ['','']
+            row = sum(line_lengths) + 1 # keep track of row for self.links
+            for ID in backlinks:
+                row += 1
+                title = utils.load_zettel(ID)['TITLE']
+                # add to text and add to links
+                self.lines.append(f'    <- #{ID} {title}')
+                self.links.append({
+                    'ID': '#'+ID,
+                    'row': row,
+                    'col': 7
+                    })
+
         # keep track of which link cursor is on (default -1 means none)
         self.link = -1
-
         # top line of text visible
         self.top = 0
 

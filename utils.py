@@ -42,6 +42,19 @@ def load_zettel(ID):
         zettel['BODY'] = ''
     return zettel
 
+# list IDs of zettel that link to target ID
+def list_backlinks(target):
+    IDs = os.listdir(kasten_dir)    # get list of IDs
+    link = re.compile(f'#{target}') # regex to match link to target ID
+    backlinks = []
+    for ID in IDs:
+        with open(kasten_dir+ID, 'r') as f:
+            text = f.read()
+        match = link.search(text)   # search for link in filetext
+        if match:
+            backlinks.append(ID)    # if we found one, add ID to list
+    return backlinks
+
 # increment letters in IDs, a -> b -> ... -> z -> aa -> ab -> ...
 def increment_letters(letters):
     # convert letters to list of numbers a=0, ..., z=25
