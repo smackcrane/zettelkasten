@@ -38,6 +38,18 @@ class Index:
     def getmaxyx(self):
         return self.win.getmaxyx()
 
+    def debugger(self, s, state=False):
+        log = '/dev/pts/5'
+        with open(log, 'w') as f:
+            print(s, file=f)
+            if state:
+                print(f'self.row: {self.row}\n'
+                        + f'self.top: {self.top}\n'
+                        + f'self.searching: {self.searching}\n'
+                        + f'self.command_mode: {self.command_mode}\n'
+                        + f'len(self.zett): {len(self.zett)}\n',
+                file=f)
+
     def start_search(self):
         self.searching = True
 
@@ -94,6 +106,8 @@ class Index:
             elif self.command_mode:
                 self.end_command()
                 flag, val = 'end_command', None
+            else:
+                self.update_list()
         elif k == Keys.RETURN: # end search and keep results
             if self.searching:
                 self.end_search()

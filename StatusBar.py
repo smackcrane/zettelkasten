@@ -13,8 +13,6 @@ class StatusBar:
     def __init__(self, win):
         # curses window we're living in
         self.win = win
-        # ID if relevant
-        self.ID = None
         # text to display
         self.text = ''
         # search text when searching
@@ -33,11 +31,8 @@ class StatusBar:
     def refresh(self):
         self.win.erase()
         curses.curs_set(0) # hide cursor
-        if self.ID:
-            display = self.ID.ljust(9)+self.text
-        else:
-            display = self.text
-        display += ' '*curses.COLS # pad with spaces to light up whole bar
+        # pad with spaces to light up whole bar
+        display = self.text + ' '*curses.COLS
         self.win.insstr( 0,0, display, self.attr )
         self.win.refresh()
 
@@ -107,7 +102,12 @@ class StatusBar:
     def keypress(self, k):
         flag, val = None, None
         if k == Keys.ESC:
-            self.end_search()
+            if self.searching:
+                self.end_search()
+            elif self.command_mode:
+                self.end_command()
+            else:
+                self.echo(k)
         elif self.searching or self.command_mode:
             self.insert(k)
         else:
