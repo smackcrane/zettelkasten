@@ -89,10 +89,13 @@ class StatusBar:
 
     def insert(self, k):
         if k == Keys.BACKSPACE:
-            # don't backspace '/' when searching
-            if len(self.search_text) > 0:
+            # don't backspace '/' when searching or ':' in command mode
+            if self.searching and len(self.search_text) > 0:
                 self.text = self.text[:-1]
                 self.search_text = self.search_text[:-1]
+            elif self.command_mode and len(self.command_text) > 0:
+                self.text = self.text[:-1]
+                self.command_text = self.command_text[:-1]
         elif 32 <= k <= 126: # only include "regular" characters
             self.text += chr(k)
             self.search_text += chr(k)
