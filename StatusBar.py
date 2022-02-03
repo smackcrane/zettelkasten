@@ -61,11 +61,16 @@ class StatusBar:
     def exec_command(self):
         self.command_mode = False
         self.text = ''
-        if self.command_text == 'protograph':
-            self.text = 'protographing ...'
+        if 'protograph' in self.command_text:
+            if 'directed' in self.command_text:
+                directed = True
+                self.text = 'protographing (directed) ...'
+            else:
+                directed = False
+                self.text = 'protographing ...'
             self.refresh()
             try:
-                utils.protograph()
+                utils.protograph(directed)
                 self.text = ''
             except Exception as e:
                 self.text = 'ERROR: ' + str(e)

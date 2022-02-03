@@ -124,7 +124,7 @@ def search_IDs_titles(search_text):
     return zett
 
 # generate graph using protograph
-def protograph():
+def protograph(directed=False):
     IDs = os.listdir(kasten_dir)
     link = re.compile(r'#\d+[a-z]+')    # regex to match links in notes
     node_list = []
@@ -143,8 +143,17 @@ def protograph():
         for link_ID in link.findall(text):
             # get node number of linked zettel
             j = IDs.index(link_ID.lstrip('#'))  # (get rid of leading hash)
-            # add edge to list in protograph format
-            edge_list.append(f'edge {i+1} {j+1}') # recall pg indexes by 1
+            # add edge to list in protograph format, both ways if undirected
+            # recall pg indexes by 1, so +1 everywhere
+            if not directed:
+                forward = f'edge {i+1} {j+1}'
+                backward = f'edge {j+1} {i+1}'
+                if forward not in edge_list: # check to avoid duplicates
+                    edge_list.append(forward)
+                if backward not in edge_list:
+                    edge_list.append(backward)
+            else:
+                edge_list.append(f'edge {i+1} {j+1}')
     # set commands to define nodes, define edges, then render
     commands = '\n'.join(node_list + edge_list + ['render'])
     commands += '\n'    # file-end newline for unix happiness
