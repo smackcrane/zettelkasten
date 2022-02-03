@@ -172,6 +172,7 @@ class Viewer:
         elif k == Keys.LEFT:        flag, val = self.left()
         elif k == Keys.RIGHT:       flag, val = self.right()
         elif k == Keys.RETURN:      flag, val = self.enter()
+        elif k == Keys.CTRL_g:      flag, val = 'show_index', None
         elif k == Keys.CTRL_n:      flag, val = 'new', None
         elif k == ord('+'):         flag, val = 'new', None
         elif k == Keys.CTRL_q:      flag, val = 'quit', None

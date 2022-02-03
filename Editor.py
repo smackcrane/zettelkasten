@@ -315,6 +315,7 @@ class Editor:
         elif k == Keys.SHIFT_RIGHT: self.forward()
         elif k == Keys.CTRL_a:      self.line_beginning()
         elif k == Keys.CTRL_e:      self.line_end()
+        elif k == CTRL_g:           flag, val = 'show_index', None
         elif k == Keys.BACKSPACE:   self.backspace()
         elif k == Keys.TAB:         self.tab()
         elif k == Keys.RETURN:      self.newline()

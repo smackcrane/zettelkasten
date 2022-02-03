@@ -98,6 +98,7 @@ class Index:
         elif k == Keys.CTRL_d:      self.halfpage_down()
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
+        elif k == Keys.CTRL_g:      flag, val = 'hide_index', None
         elif k == Keys.ESC: # end search and get rid of results
             if self.searching:
                 self.end_search()

@@ -9,6 +9,7 @@ class Keys:
     CTRL_a = 1
     CTRL_d = 4
     CTRL_e = 5
+    CTRL_g = 7
     BACKSPACE = 8
     TAB = 9
     RETURN = 10

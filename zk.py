@@ -21,22 +21,33 @@ def main(screen):
     # stack of windows/containers active on screen in order
     stack = WindowStack(screen)
 
-    # create index window and add it to wins stack
-    stack.push(Index(curses.newwin(curses.LINES-1,curses.COLS)))
-    # create status bar at bottom row, not in wins stack
+    # create index window, not in window stack
+    index = Index(curses.newwin(curses.LINES-1,curses.COLS))
+    show_index = True   # flag to show index window or not
+    # create status bar at bottom row, not in window stack
     status = StatusBar(curses.newwin( 1,curses.COLS, curses.LINES-1,0 ))
 
     # standard size for subwindows: at most quarter-screen, at most 15x60
     rows = min(15, curses.LINES//3)
     cols = min(60, 3*curses.COLS//4)
 
-    while stack:
+    while True:
         try:    # general error handling
+            # refresh screen
+            if show_index:
+                stack.refresh()
+                index.refresh()
+            else:
+                index.refresh()
+                stack.refresh()
             k = screen.getch()
             # pass keypress to active window
             # and capture possible additional instructions
             status.keypress(k)
-            flag, val = stack.keypress(k)
+            if stack and not show_index:
+                flag, val = stack.keypress(k)
+            else:
+                flag, val = index.keypress(k)
 
             if flag == 'new':
                 # create new zettel
@@ -46,6 +57,7 @@ def main(screen):
                 stack.push(Editor(
                     curses.newwin( rows,cols, y,x ),
                     config.kasten_dir+ID))
+                show_index = False
             elif flag == 'edit':
                 ID = val # expect val to be ID of zettel to edit
                 # create an editor
@@ -53,6 +65,7 @@ def main(screen):
                 stack.push(Editor(
                     curses.newwin( rows,cols, y,x ),
                     config.kasten_dir+ID))
+                show_index = False
             elif flag == 'open':
                 ID = val # expect val to be ID of zettel to edit
                 # create a viewer
@@ -60,6 +73,7 @@ def main(screen):
                 stack.push(Viewer(
                     curses.newwin( rows,cols, y,x ),
                     config.kasten_dir+ID))
+                show_index = False
             elif flag == 'edit->open': # change editor to viewer
                 ID = val # expect val to be ID of relevant zettel
                 window = stack.pop().win
@@ -68,12 +82,18 @@ def main(screen):
                 ID = val # expect val to be ID of relevant zettel
                 window = stack.pop().win
                 stack.push(Editor(window, config.kasten_dir+ID))
+            elif flag == 'show_index':
+                show_index = True
+            elif flag == 'hide_index':
+                show_index = False
             elif flag == 'start_search':
                 status.start_search()
             elif flag == 'end_search':
                 status.end_search()
             elif flag == 'searching':
-                stack.wins[-1].search(status.search_text)
+                index.search(status.search_text)
+                if not show_index:
+                    stack.refresh()
             elif flag == 'start_command':
                 status.start_command()
             elif flag == 'end_command':
@@ -86,12 +106,22 @@ def main(screen):
                 if val == 'Index' and len(stack) > 1:
                     # don't kill index unless it's the last window
                     pass
+                elif val == 'Index':
+                    # if it is the last window, quit altogether
+                    break
                 else:
                     stack.pop()
             elif flag == 'window_up':
-                stack.up()
+                if show_index:
+                    show_index = False
+                else:
+                    stack.up()
+                show_index = False
             elif flag == 'window_down':
-                stack.down()
+                if show_index:
+                    show_index = False
+                else:
+                    stack.down()
         except Exception as e:
             status.error(e)
 
