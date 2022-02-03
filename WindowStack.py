@@ -16,13 +16,19 @@ class WindowStack:
         self.wins = []
         # initialize density map of windows in screen
         rows, cols = screen.getmaxyx()
-        self.dmap = np.zeros((rows, cols), np.int16)
+        self.dmap = np.zeros((rows, cols))
+
+        # initialize density contribution of each new window
+        self.window_density = np.array(
+                [[1/(1+i+j) for i in range(cols)] for j in range(rows)]
+                )
+
 
     def __len__(self):
         return len(self.wins)
 
-    def debug_log(self, s, state=False):
-        debug_file = '/dev/pts/4'
+    def debugger(self, s, state=False):
+        debug_file = '/dev/pts/3'
         with open(debug_file, 'w') as f:
             print(s, file=f)
             if state:
@@ -53,10 +59,10 @@ class WindowStack:
     def push(self, window):
         # add window to stack
         self.wins.append(window)
-        # update density map, adding 1 to each pixel in the window
+        # update density map, adding new weights to each pixel in the window
         y, x = window.getbegyx() # upper-left coordinates
         rows, cols = window.getmaxyx()
-        self.dmap[y:y+rows, x:x+cols] += 1
+        self.dmap[y:y+rows, x:x+cols] += self.window_density[:rows,:cols]
 
         self.refresh()
 
@@ -82,8 +88,8 @@ class WindowStack:
         #   np.r_ adds a row, np.c_ adds a column
         scr_rows, scr_cols = self.dmap.shape
         rect_sums = np.c_[
-                np.zeros((scr_rows+1), dtype=np.int16),
-                np.r_[ np.zeros((1,scr_cols), dtype=np.int16), rect_sums ]
+                np.zeros((scr_rows+1)),
+                np.r_[ np.zeros((1,scr_cols)), rect_sums ]
                 ]
         # delete bottom row so we don't overlap the status bar that should
         #   be there
