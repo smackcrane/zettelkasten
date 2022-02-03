@@ -55,6 +55,10 @@ class Index:
 
     def end_search(self):
         self.searching = False
+        if self.zett:
+            return self.zett[self.row]['ID']
+        else:
+            return None
 
     def search(self, text):
         self.zett = utils.search_IDs_titles(text)

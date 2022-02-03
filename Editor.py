@@ -29,6 +29,9 @@ class Editor:
         # hidden column for up/down btwn lines of different length
         self.hidden_col = col
 
+        # flag for search in progress
+        self.searching = False
+
         # attribute for display
         self.attr = curses.A_NORMAL
 
@@ -51,6 +54,12 @@ class Editor:
                         + f'self.col: {self.col}\n'
                         + f'self.top: {self.top}\n',
                         file=f)
+
+    def start_search(self):
+        self.searching = True
+
+    def end_search(self):
+        self.searching = False
 
     def refresh(self):
         self.win.erase()
@@ -305,9 +314,28 @@ class Editor:
         self.hidden_col = self.col
         self.refresh()
 
+    def insert_link(self, link):
+        self.lines[self.row] = self.lines[self.row][:self.col] \
+                + link \
+                + self.lines[self.row][self.col:]
+        self.col += len(link)
+        self.hidden_col = self.col
+        self.refresh()
+
     def keypress(self, k):
         flag, val = None, None
-        if k == Keys.UP:            self.up()
+        if self.searching:  # only these commands allowed while searching
+            if k == Keys.UP:        flag, val = 'searching', 'up'
+            elif k == Keys.DOWN:    flag, val = 'searching', 'down'
+            elif k == Keys.RETURN:
+                self.end_search()
+                flag, val = 'insert_link', None
+            elif k == Keys.ESC:
+                self.end_search()
+                flag, val = 'end_search', None
+            else:                   flag, val = 'searching', None
+        # if not searching, normal commands apply
+        elif k == Keys.UP:          self.up()
         elif k == Keys.DOWN:        self.down()
         elif k == Keys.LEFT:        self.left()
         elif k == Keys.RIGHT:       self.right()
@@ -315,7 +343,10 @@ class Editor:
         elif k == Keys.SHIFT_RIGHT: self.forward()
         elif k == Keys.CTRL_a:      self.line_beginning()
         elif k == Keys.CTRL_e:      self.line_end()
-        elif k == CTRL_g:           flag, val = 'show_index', None
+        elif k == Keys.CTRL_f:
+            self.start_search()
+            flag, val = 'start_search', None
+        elif k == Keys.CTRL_g:      flag, val = 'show_index', None
         elif k == Keys.BACKSPACE:   self.backspace()
         elif k == Keys.TAB:         self.tab()
         elif k == Keys.RETURN:      self.newline()

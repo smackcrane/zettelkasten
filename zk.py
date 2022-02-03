@@ -88,12 +88,23 @@ def main(screen):
                 show_index = False
             elif flag == 'start_search':
                 status.start_search()
+                index.start_search()
             elif flag == 'end_search':
                 status.end_search()
+                index.end_search()
             elif flag == 'searching':
-                index.search(status.search_text)
+                if val == 'up':
+                    index.up()
+                elif val == 'down':
+                    index.down()
+                else:
+                    index.search(status.search_text)
                 if not show_index:
                     stack.refresh()
+            elif flag == 'insert_link':
+                status.end_search()
+                ID = index.end_search()
+                stack.wins[-1].insert_link(f'#{ID}')
             elif flag == 'start_command':
                 status.start_command()
             elif flag == 'end_command':

@@ -42,7 +42,9 @@ class StatusBar:
 
     def start_search(self):
         self.searching = True
+        self.text = '/'
         self.search_text = ''
+        self.refresh()
 
     def end_search(self):
         self.searching = False

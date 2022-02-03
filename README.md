@@ -34,6 +34,7 @@
 - `CTRL+q` (quit) to close
 - `CTRL+o` (open) to change to viewing
 - `CTRL+n` (new) to create and edit new zettel
+- `CTRL+f` (find) to start a search, then `UP`/`DOWN` to interact with results, `ENTER` to insert selected link, `ESC` to cancel
 
 ## Setup
 
