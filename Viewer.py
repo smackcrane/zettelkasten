@@ -7,7 +7,6 @@
 
 import curses
 import re
-import time
 import sys
 import utils
 from Keys import Keys

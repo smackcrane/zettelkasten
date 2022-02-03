@@ -1,4 +1,4 @@
-# Zettelkasten CLI in python
+# Zettelkasten terminal application in python
 
 ## Usage
 

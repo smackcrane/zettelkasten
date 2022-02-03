@@ -5,6 +5,7 @@
 #
 ############################################################################
 
+import curses
 import numpy as np
 
 # possible annoyance: everything breaks if self.wins is empty
@@ -30,8 +31,24 @@ class WindowStack:
                         file=f)
 
     def refresh(self):
+        # refresh windows from bottom to top
         for window in self.wins:
             window.refresh()
+        # draw a box around top window
+        y, x = self.wins[-1].getbegyx()
+        rows, cols = self.wins[-1].getmaxyx()
+        # adjust coordinates out by 1 if possible
+        if y > 0: y -= 1
+        if x > 0: x -= 1
+        if y + rows + 2 < curses.LINES: rows += 2 # remember bottom row
+        elif y + rows + 1 < curses.LINES: rows += 1 # is status bar
+        if x + cols + 2 <= curses.COLS: cols += 2
+        elif x + cols + 1 <= curses.COLS: cols += 1
+        temp = curses.newwin( rows,cols, y,x )
+        temp.border()
+        temp.refresh()
+        self.wins[-1].refresh()
+        del temp
 
     def push(self, window):
         # add window to stack

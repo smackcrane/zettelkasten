@@ -138,6 +138,16 @@ class Editor:
 
         self.win.refresh()
 
+    def flash(self):
+        # only flash if text is working attribute is normal
+        if self.attr != curses.A_NORMAL:
+            return
+        self.attr = curses.A_REVERSE
+        self.refresh()
+        time.sleep(0.1)
+        self.attr = curses.A_NORMAL
+        self.refresh()
+
     # self.up/down/left/right just move relative to self.lines, cursor
     #   position and self.top are computed in self.refresh()
     def up(self):
@@ -284,11 +294,7 @@ class Editor:
     def save(self):
         with open(self.filepath, 'w') as f:
             f.write('\n'.join(self.lines))
-        # flash window to confirm
-        self.attr = curses.A_REVERSE
-        self.refresh()
-        time.sleep(0.1)
-        self.attr = curses.A_NORMAL
+        self.flash()    # flash window to confirm
         self.refresh()
 
     def insert(self, k):
