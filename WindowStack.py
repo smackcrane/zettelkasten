@@ -16,12 +16,15 @@ class WindowStack:
         self.wins = []
         # initialize density map of windows in screen
         rows, cols = screen.getmaxyx()
-        self.dmap = np.zeros((rows, cols))
+        self.dmap = np.zeros((rows, cols), dtype=np.int16)
 
         # initialize density contribution of each new window
+        density = lambda y,x: int(rows-y + cols-x)
         self.window_density = np.array(
-                [[1/(1+i+j) for i in range(cols)] for j in range(rows)]
+                [[density(y,x) for x in range(cols)] for y in range(rows)],
+                dtype=np.int16
                 )
+        self.dmap += self.window_density # starting density
 
 
     def __len__(self):
@@ -37,6 +40,8 @@ class WindowStack:
                         file=f)
 
     def refresh(self):
+        if not self.wins: # if no windows, do nothing
+            return
         # refresh windows from bottom to top
         for window in self.wins:
             window.refresh()
@@ -71,7 +76,7 @@ class WindowStack:
         # update density map, subtracting 1 from each pixel in the window
         y, x = window.getbegyx() # upper-left coordinates
         rows, cols = window.getmaxyx()
-        self.dmap[y:y+rows, x:x+cols] -= 1
+        self.dmap[y:y+rows, x:x+cols] -= self.window_density[:rows,:cols]
         self.refresh()
         return window
 
@@ -88,8 +93,8 @@ class WindowStack:
         #   np.r_ adds a row, np.c_ adds a column
         scr_rows, scr_cols = self.dmap.shape
         rect_sums = np.c_[
-                np.zeros((scr_rows+1)),
-                np.r_[ np.zeros((1,scr_cols)), rect_sums ]
+                np.zeros((scr_rows+1), dtype=np.int16),
+                np.r_[ np.zeros((1,scr_cols), dtype=np.int16), rect_sums ]
                 ]
         # delete bottom row so we don't overlap the status bar that should
         #   be there
