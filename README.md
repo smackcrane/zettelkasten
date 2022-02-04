@@ -4,7 +4,8 @@
 
 ### Navigation
 
-- `CTRL+UP` and `CTRL+DOWN` to cycle through windows
+- `CTRL+UP` and `CTRL+DOWN` to cycle through windows (not including index)
+- `CTRL+g` (home) to hide/show index window (alas `CTRL+h` is backspace)
 
 ### Index Window
 
