@@ -95,8 +95,10 @@ def main(screen):
             elif flag == 'searching':
                 if val == 'up':
                     index.up()
+                    status.preview_ID(index.active_ID())
                 elif val == 'down':
                     index.down()
+                    status.preview_ID(index.active_ID())
                 else:
                     index.search(status.search_text)
                 if not show_index:

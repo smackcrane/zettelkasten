@@ -55,10 +55,7 @@ class Index:
 
     def end_search(self):
         self.searching = False
-        if self.zett:
-            return self.zett[self.row]['ID']
-        else:
-            return None
+        return self.active_ID()
 
     def search(self, text):
         self.zett = utils.search_IDs_titles(text)
@@ -72,6 +69,12 @@ class Index:
 
     def end_command(self):
         self.command_mode = False
+
+    def active_ID(self):
+        if self.zett:
+            return self.zett[self.row]['ID']
+        else:
+            return None
 
     def update_list(self):
         self.zett = utils.list_IDs_titles()

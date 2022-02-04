@@ -28,13 +28,33 @@ class StatusBar:
 
         self.refresh()
 
-    def refresh(self):
+    def debugger(self, s, state=False):
+        log = '/dev/pts/4'
+        with open(log, 'w') as f:
+            print(s, file=f)
+            if state:
+                print(f'self.text: {self.text}\n'
+                        + f'self.search_text: {self.search_text}\n'
+                        + f'self.command_text: {self.command_text}\n'
+                        + f'self.searching: {self.searching}\n'
+                        + f'self.command_mode: {self.command_mode}\n',
+                file=f)
+
+    def refresh(self, text=None):
+        if text == None:    # default
+            text = self.text
         self.win.erase()
         curses.curs_set(0) # hide cursor
         # pad with spaces to light up whole bar
-        display = self.text + ' '*curses.COLS
+        display = text + ' '*curses.COLS
         self.win.insstr( 0,0, display, self.attr )
         self.win.refresh()
+
+    def preview_ID(self, ID):
+        if ID: # may be None
+            zettel = utils.load_zettel(ID)
+            text = zettel['ID'].ljust(9) + zettel['TITLE']
+            self.refresh(text)
 
     def set(self, text):
         self.text = text
@@ -126,5 +146,5 @@ class StatusBar:
         return flag, val
 
     def error(self, e):
-        self.text = 'ERROR: ' + str(e)
-        self.refresh()
+        text = 'ERROR: ' + str(e)
+        self.refresh(text)
