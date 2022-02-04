@@ -132,6 +132,11 @@ class Viewer:
             return None, None # if no links or no active link, do nothing
         if self.link > 0:
             self.link -= 1
+        # move down if necessary to see the link
+        l = self.links[self.link]
+        bottom = l['row'] + ( (l['col']+len(l['ID'])-1) // self.cols )
+        while self.top + self.rows <= bottom:
+            self.top += 1
         # move up if necessary to see the link
         if self.top > self.links[self.link]['row']:
             self.top = self.links[self.link]['row']
@@ -151,6 +156,9 @@ class Viewer:
         bottom = l['row'] + ( (l['col']+len(l['ID'])-1) // self.cols )
         while self.top + self.rows <= bottom:
             self.top += 1
+        # move up if necessary to see the link
+        if self.top > self.links[self.link]['row']:
+            self.top = self.links[self.link]['row']
         self.refresh()
         ID = self.links[self.link]['ID'].lstrip('#')
         title = utils.load_zettel(ID)['TITLE']
