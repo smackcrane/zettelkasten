@@ -22,6 +22,8 @@ class Viewer:
         # top line of text visible
         self.top = 0
 
+        self.lines = [] # create variable initialized in self.load()
+        self.links = [] # create variable initialized in self.load()
         self.load()
         self.refresh()
 
@@ -166,7 +168,7 @@ class Viewer:
         flag, val = 'status', '#'+ID+' '+title
         return flag, val
 
-    def enter(self):
+    def open_link(self):
         # open active link for viewing
         if self.link == -1:
             return None, None
@@ -180,7 +182,7 @@ class Viewer:
         elif k == Keys.DOWN:        self.down()
         elif k == Keys.LEFT:        flag, val = self.left()
         elif k == Keys.RIGHT:       flag, val = self.right()
-        elif k == Keys.RETURN:      flag, val = self.enter()
+        elif k == Keys.RETURN:      flag, val = self.open_link()
         elif k == Keys.CTRL_g:      flag, val = 'show_index', None
         elif k == Keys.CTRL_n:      flag, val = 'new', None
         elif k == ord('+'):         flag, val = 'new', None
@@ -190,6 +192,7 @@ class Viewer:
         elif k == ord('e'):
             ID = self.filepath.split('/')[-1] # extract ID from filepath
             flag, val = 'open->edit', ID
+        elif k == ord('o'):         flag, val = self.open_link()
         elif k == ord('r'):
             self.load()
             self.refresh()

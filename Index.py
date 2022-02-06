@@ -123,6 +123,8 @@ class Index:
             elif self.command_mode:
                 self.end_command()
                 flag, val = 'exec_command', None
+            else:
+                flag, val = 'open', self.zett[self.row]['ID']
         elif self.searching:
             # only allow keys above this point while searching
             flag, val = 'searching', None
