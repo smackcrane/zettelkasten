@@ -135,6 +135,10 @@ def main(screen):
                     show_index = False
                 else:
                     stack.down()
+            elif flag == 'expand':
+                stack.expand(val) # expect val = 'vertical', 'horizontal'
+            elif flag == 'shrink':
+                stack.shrink(val) # expect val = 'vertical', 'horizontal'
         except Exception as e:
             status.error(e)
         except KeyboardInterrupt:

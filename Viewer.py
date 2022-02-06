@@ -180,6 +180,14 @@ class Viewer:
         flag, val = 'open', ID
         return flag, val
 
+    def resize(self, rows,cols, y,x ):
+        oldwin = self.win
+        self.win = curses.newwin( rows,cols, y,x )
+        del oldwin
+        self.rows, self.cols = self.win.getmaxyx()
+        self.load()
+        self.refresh()
+
     def keypress(self, k):
         flag, val = None, None
         if k == Keys.UP:            self.up()
@@ -200,5 +208,9 @@ class Viewer:
         elif k == ord('r'):
             self.load()
             self.refresh()
+        elif k == Keys.CTRL_SHIFT_UP:    flag, val = 'expand', 'vertical'
+        elif k == Keys.CTRL_SHIFT_DOWN:  flag, val = 'shrink', 'vertical'
+        elif k == Keys.CTRL_SHIFT_LEFT:  flag, val = 'expand', 'horizontal'
+        elif k == Keys.CTRL_SHIFT_RIGHT: flag, val = 'shrink', 'horizontal'
 
         return flag, val

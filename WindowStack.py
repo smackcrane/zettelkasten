@@ -124,5 +124,51 @@ class WindowStack:
         self.wins.insert(0, self.wins.pop())
         self.refresh()
 
+    def expand(self, direction):
+        # note: helpful to go through WindowStack instead of doing directly
+        #    in window in order to update dmap (using this push/pop)
+        assert direction in ['vertical', 'horizontal'], \
+                "invalid direction to expand"
+        window = self.pop()
+        y, x = window.getbegyx()
+        rows, cols = window.getmaxyx()
+        # add 3 to desired direction if possible
+        if direction == 'vertical':
+            top = min(1, y)
+            # extra -1 for status bar at bottom row
+            bottom = min(1, curses.LINES - y - rows - 1)
+            y -= top
+            rows += top + bottom
+        elif direction == 'horizontal':
+            left = min(2, x)
+            right = min(2, curses.COLS - x - cols)
+            x -= left
+            cols += left + right
+        window.resize( rows,cols, y,x )
+        self.push(window)
+
+    def shrink(self, direction):
+        # note: helpful to go through WindowStack instead of doing directly
+        #    in window in order to update dmap (using this push/pop)
+        assert direction in ['vertical', 'horizontal'], \
+                "invalid direction to expand"
+        window = self.pop()
+        y, x = window.getbegyx()
+        rows, cols = window.getmaxyx()
+        # subtract 3 from desired direction if possible
+        # minimum size 10 rows x 40 columns
+        if direction == 'vertical':
+            top = max( min(1, rows - 10), 0) # max to ensure >= 0
+            bottom = max( min(1, rows - top - 10), 0)
+            y += top
+            rows -= top + bottom
+        elif direction == 'horizontal':
+            left = max( min(2, cols - 40), 0)
+            right = max( min(2, cols - left - 40), 0)
+            x += left
+            cols -= left + right
+        window.resize( rows,cols, y,x )
+        self.push(window)
+
     def keypress(self, k):
         return self.wins[-1].keypress(k)

@@ -322,6 +322,13 @@ class Editor:
         self.hidden_col = self.col
         self.refresh()
 
+    def resize(self, rows,cols, y,x ):
+        oldwin = self.win
+        self.win = curses.newwin( rows,cols, y,x )
+        del oldwin
+        self.rows, self.cols = self.win.getmaxyx()
+        self.refresh()
+
     def keypress(self, k):
         flag, val = None, None
         if self.searching:  # only these commands allowed while searching
@@ -357,6 +364,10 @@ class Editor:
         elif k == Keys.CTRL_w:      self.save()
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
+        elif k == Keys.CTRL_SHIFT_UP:    flag, val = 'expand', 'vertical'
+        elif k == Keys.CTRL_SHIFT_DOWN:  flag, val = 'shrink', 'vertical'
+        elif k == Keys.CTRL_SHIFT_LEFT:  flag, val = 'expand', 'horizontal'
+        elif k == Keys.CTRL_SHIFT_RIGHT: flag, val = 'shrink', 'horizontal'
         else:                       self.insert(k)
 
         return flag, val

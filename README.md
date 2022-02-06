@@ -26,6 +26,7 @@
 - `r` (refresh) to refresh (e.g. in case of new backlinks)
 - `ENTER` to open selected link for viewing
 - `CTRL+n` (new) to create and edit new zettel
+- `CTRL+SHIFT+UP` to expand window vertically, `CTRL+SHIFT+DOWN` to shrink vertically, `CTRL+SHIFT+LEFT` and `CTRL+SHIFT+RIGHT` to expand and shrink horizontally
 
 ### Editor Window
 
@@ -37,6 +38,7 @@
 - `CTRL+o` (open) to change to viewing
 - `CTRL+n` (new) to create and edit new zettel
 - `CTRL+f` (find) to start a search, then `UP`/`DOWN` to interact with results, `ENTER` to insert selected link, `ESC` to cancel
+- `CTRL+SHIFT+UP` to expand window vertically, `CTRL+SHIFT+DOWN` to shrink vertically, `CTRL+SHIFT+LEFT` and `CTRL+SHIFT+RIGHT` to expand and shrink horizontally
 
 ## Setup
 
