@@ -54,9 +54,13 @@ class Viewer:
         self.lines = []
         line_lengths = [] # to translate between raw_lines and self.lines
         for line in raw_lines:
-            line_lengths.append(-(len(line) // -self.cols)) # ceiling div
-            for x in range(0, len(line), self.cols):
-                self.lines.append(line[x:x+self.cols])
+            if len(line) == 0: # special case for empty line
+                line_lengths.append(1)
+                self.lines.append('')
+            else:
+                line_lengths.append(-(len(line) // -self.cols)) # ceiling //
+                for x in range(0, len(line), self.cols):
+                    self.lines.append(line[x:x+self.cols])
 
         # create list of links, each a dict of ID and start coords
         ref = re.compile(r'#\d+[a-z]+')
