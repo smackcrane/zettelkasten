@@ -23,6 +23,7 @@
 - Scroll with `UP`/`DOWN` arrow keys
 - Select links with `LEFT`/`RIGHT` arrow keys
 - `e` (edit) to change to editing
+- `r` (refresh) to refresh (e.g. in case of new backlinks)
 - `ENTER` to open selected link for viewing
 - `CTRL+n` (new) to create and edit new zettel
 

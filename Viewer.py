@@ -13,13 +13,39 @@ from Keys import Keys
 
 class Viewer:
     def __init__(self, win, filepath):
-        # curses window we're living in
-        self.win = win
-        # dimensions of window
-        self.rows, self.cols = self.win.getmaxyx()
+        self.win = win # curses window we're living in
+        self.rows, self.cols = self.win.getmaxyx() # dimensions of window
+        self.filepath = filepath
+
+        # keep track of which link cursor is on (default -1 means none)
+        self.link = -1
+        # top line of text visible
+        self.top = 0
+
+        self.load()
+        self.refresh()
+
+    def getbegyx(self):
+        return self.win.getbegyx()
+
+    def getmaxyx(self):
+        return self.win.getmaxyx()
+
+    def debugger(self, s, state=False):
+        log_file = '/dev/pts/1'
+        with open(log_file, 'w') as f:
+            print(s, file=f)
+            if state:
+                print(f'self.filepath: {self.filepath}\n'
+                        + f'self.rows: {self.rows}\n'
+                        + f'self.cols: {self.cols}\n'
+                        + f'self.top: {self.top}\n',
+                        file=f)
+                print(self.lines, file=f)
+
+    def load(self):
         # load text from file as a list of lines
         #   then break into lines of window length
-        self.filepath = filepath
         with open(self.filepath, 'r') as f:
             raw_lines = f.readlines()
         raw_lines = [line.rstrip('\n') for line in raw_lines]
@@ -59,31 +85,6 @@ class Viewer:
                     'row': row,
                     'col': 7
                     })
-
-        # keep track of which link cursor is on (default -1 means none)
-        self.link = -1
-        # top line of text visible
-        self.top = 0
-
-        self.refresh()
-
-    def getbegyx(self):
-        return self.win.getbegyx()
-
-    def getmaxyx(self):
-        return self.win.getmaxyx()
-
-    def debugger(self, s, state=False):
-        log_file = '/dev/pts/1'
-        with open(log_file, 'w') as f:
-            print(s, file=f)
-            if state:
-                print(f'self.filepath: {self.filepath}\n'
-                        + f'self.rows: {self.rows}\n'
-                        + f'self.cols: {self.cols}\n'
-                        + f'self.top: {self.top}\n',
-                        file=f)
-                print(self.lines, file=f)
 
     def refresh(self):
         self.win.erase()
@@ -189,5 +190,8 @@ class Viewer:
         elif k == ord('e'):
             ID = self.filepath.split('/')[-1] # extract ID from filepath
             flag, val = 'open->edit', ID
+        elif k == ord('r'):
+            self.load()
+            self.refresh()
 
         return flag, val
