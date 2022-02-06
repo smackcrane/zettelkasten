@@ -137,6 +137,10 @@ def main(screen):
                     stack.down()
         except Exception as e:
             status.error(e)
+        except KeyboardInterrupt:
+            status.error('KeyboardInterrupt: press any key to cancel, or KeyboardInterrupt again to quit')
+            screen.getch() # not sure why two are needed, but doesn't
+            screen.getch() # seem to work with just one?
 
 if __name__ == '__main__':
     curses.wrapper(main)
