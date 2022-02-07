@@ -111,21 +111,26 @@ def search_IDs_titles(search_text):
     # if search_text begins with '/', (remove it and) only search titles
     if search_text[:1] == '/':
         search_text = search_text[1:]
-        search_titles = True
+        search_type = 'title'
+    elif search_text[:1] == '#':
+        search_text = search_text[1:]
+        search_type = 'ID'
     else:
-        search_titles = False
+        search_type = 'full_text'
     zett = []
     for ID in IDs:
         with open(kasten_dir+ID, 'r') as f:
-            if search_titles:
+            if search_type == 'title' or search_type == 'ID':
                 try:
                     zettel = yaml.load(f, Loader=yaml.SafeLoader)
-                    if search_text.lower() in zettel['TITLE'].lower():
+                    zettel['TITLE'] = zettel['TITLE'] or '' # beware None
+                    # caution: oversize load
+                    if (search_type == 'title' and search_text.lower() in zettel['TITLE'].lower()) or (search_type == 'ID' and search_text.lower() in ID):
                         zett.append({'ID':ID, 'TITLE': zettel['TITLE']})
                 except yaml.scanner.ScannerError:
                     # if we can't read the yaml then just ignore it
                     pass
-            else:
+            else: # search_type == 'full_text'
                 file_text = f.read()
                 # add to the list if we found the search text
                 if search_text.lower() in file_text.lower():
