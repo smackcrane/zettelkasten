@@ -107,20 +107,37 @@ def new_zettel():
 # search zettels for text, return list of ID & title dicts
 def search_IDs_titles(search_text):
     IDs = os.listdir(path=kasten_dir)
-
+    
+    # if search_text begins with '/', (remove it and) only search titles
+    if search_text[:1] == '/':
+        search_text = search_text[1:]
+        search_titles = True
+    else:
+        search_titles = False
     zett = []
     for ID in IDs:
         with open(kasten_dir+ID, 'r') as f:
-            file_text = f.read()
-            # only add to the list if we found the search text
-            if search_text.lower() in file_text.lower():
+            if search_titles:
                 try:
-                    f.seek(0) # go back to beginning of file
                     zettel = yaml.load(f, Loader=yaml.SafeLoader)
-                    zett += [{'ID': ID, 'TITLE': zettel['TITLE']}]
+                    if search_text.lower() in zettel['TITLE'].lower():
+                        zett.append({'ID':ID, 'TITLE': zettel['TITLE']})
                 except yaml.scanner.ScannerError:
-                    zett += [{'ID': ID,
-                        'TITLE': '-'*15+' HELP MY YAML IS BROKEN '+'-'*15}]
+                    # if we can't read the yaml then just ignore it
+                    pass
+            else:
+                file_text = f.read()
+                # add to the list if we found the search text
+                if search_text.lower() in file_text.lower():
+                    try:
+                        f.seek(0) # go back to beginning of file
+                        zettel = yaml.load(f, Loader=yaml.SafeLoader)
+                        zett.append({'ID': ID, 'TITLE': zettel['TITLE']})
+                    except yaml.scanner.ScannerError:
+                        zett.append({'ID': ID,
+                            'TITLE': '-'*15 +
+                                ' HELP MY YAML IS BROKEN ' +
+                                '-'*15})
     return zett
 
 # generate graph using protograph

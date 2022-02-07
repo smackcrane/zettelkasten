@@ -15,6 +15,7 @@
 - `CTRL+n` (new) to create and edit new zettel
 - `r` (refresh) to refresh list (after adding or editing zettel)
 - `/` (vim-style) to start a search, then type search query, then `ENTER` to interact with search results or `ESC` to cancel search
+- `//` to only search titles rather than full text
 - `:` (vim-style) to start a command, then type command, then `ENTER` to execute or `ESC` to cancel. Recognized commands:
     - `protograph` to visualize zettel network using [amackcrane/protograph](https://github.com/amackcrane/protograph)
 
@@ -37,7 +38,7 @@
 - `CTRL+q` (quit) to close
 - `CTRL+o` (open) to change to viewing
 - `CTRL+n` (new) to create and edit new zettel
-- `CTRL+f` (find) to start a search, then `UP`/`DOWN` to interact with results, `ENTER` to insert selected link, `ESC` to cancel
+- `CTRL+f` (find) to start a search, then `UP`/`DOWN` to interact with results, `ENTER` to insert selected link, `ESC` to cancel (begin search with `/` to only search titles)
 - `CTRL+SHIFT+UP` to expand window vertically, `CTRL+SHIFT+DOWN` to shrink vertically, `CTRL+SHIFT+LEFT` and `CTRL+SHIFT+RIGHT` to expand and shrink horizontally
 
 ## Setup
