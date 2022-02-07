@@ -83,6 +83,7 @@ class StatusBar:
     def exec_command(self):
         self.command_mode = False
         self.text = ''
+        instruction = None  # instructions to pass back to zk.py
         if 'protograph' in self.command_text:
             if 'directed' in self.command_text:
                 directed = True
@@ -96,10 +97,12 @@ class StatusBar:
                 self.text = ''
             except Exception as e:
                 self.text = 'ERROR: ' + str(e)
+        elif 'count' in self.command_text:
+            instruction = 'count'
         else:
             self.text = f'command "{self.command_text}" not recognized'
         self.refresh()
-
+        return instruction
 
     def echo(self, k):
         s = ''

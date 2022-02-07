@@ -112,7 +112,9 @@ def main(screen):
             elif flag == 'end_command':
                 status.end_command()
             elif flag == 'exec_command':
-                status.exec_command()
+                instruction = status.exec_command()
+                if instruction == 'count':
+                    status.set(str(len(index.zett)))
             elif flag == 'status':
                 status.set(val) # set text in status bar
             elif flag == 'quit':

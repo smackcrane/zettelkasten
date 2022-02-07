@@ -18,6 +18,7 @@
 - `//` to only search titles rather than full text, '/#' to search IDs
 - `:` (vim-style) to start a command, then type command, then `ENTER` to execute or `ESC` to cancel. Recognized commands:
     - `protograph` to visualize zettel network using [amackcrane/protograph](https://github.com/amackcrane/protograph)
+    - `count` to count the current list of zettel in index
 
 ### Viewer Window
 
