@@ -12,7 +12,7 @@ import utils
 from Keys import Keys
 
 class Viewer:
-    def __init__(self, win, filepath):
+    def __init__(self, win, filepath, top=0):
         self.win = win # curses window we're living in
         self.rows, self.cols = self.win.getmaxyx() # dimensions of window
         self.filepath = filepath
@@ -20,7 +20,7 @@ class Viewer:
         # keep track of which link cursor is on (default -1 means none)
         self.link = -1
         # top line of text visible
-        self.top = 0
+        self.top = top
 
         self.lines = [] # create variable initialized in self.load()
         self.links = [] # create variable initialized in self.load()
@@ -203,7 +203,7 @@ class Viewer:
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
         elif k == ord('e'):
             ID = self.filepath.split('/')[-1] # extract ID from filepath
-            flag, val = 'open->edit', ID
+            flag, val = 'open->edit', [ID, self.top]
         elif k == ord('o'):         flag, val = self.open_link()
         elif k == ord('r'):
             self.load()

@@ -75,13 +75,17 @@ def main(screen):
                     config.kasten_dir+ID))
                 show_index = False
             elif flag == 'edit->open': # change editor to viewer
-                ID = val # expect val to be ID of relevant zettel
+                ID, row = val # expect val to be list of ID and top row
                 window = stack.pop().win
-                stack.push(Viewer(window, config.kasten_dir+ID))
+                rows, cols = window.getmaxyx()
+                row = utils.convert_row(ID, cols, editor_row=row)
+                stack.push(Viewer(window, config.kasten_dir+ID, row))
             elif flag == 'open->edit': # change viewer to editor
-                ID = val # expect val to be ID of relevant zettel
+                ID, row = val # expect val to be list of ID and top row
                 window = stack.pop().win
-                stack.push(Editor(window, config.kasten_dir+ID))
+                rows, cols = window.getmaxyx()
+                row = utils.convert_row(ID, cols, viewer_row=row)
+                stack.push(Editor(window, config.kasten_dir+ID, row))
             elif flag == 'show_index':
                 show_index = True
             elif flag == 'hide_index':

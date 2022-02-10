@@ -11,6 +11,11 @@ import re
 import os
 from config import kasten_dir, template_file
 
+def debugger(s):
+    log = '/dev/pts/3'
+    with open(log, 'w') as f:
+        print(s, file=f)
+
 # entry point: list of IDs and titles
 def list_IDs_titles():
     IDs = os.listdir(path=kasten_dir)
@@ -185,3 +190,35 @@ def protograph(directed=False):
         f.write(commands)
     # call pg on temp file
     os.system(f'pg -f {temp_file} >/dev/null 2>&1')
+
+# convert row numbers between Viewer and Editor
+# give it one of the two, it returns the other
+def convert_row(ID, cols, viewer_row=None, editor_row=None):
+    assert viewer_row != None or editor_row != None, 'must provide row'
+    line_lengths = []
+    with open(kasten_dir+ID, 'r') as f:
+        for line in f:
+            line = line.rstrip('\n')
+            if not line:
+                # empty line still takes up one row
+                line_lengths.append(1)
+            else:
+                # ceiling division to find number of rows
+                line_lengths.append( -(len(line) // -cols) )
+    if viewer_row != None:
+        # convert from viewer to editor
+        editor_row = 0
+        viewer_row -= line_lengths[0]
+        while viewer_row >= 0:
+            editor_row += 1
+            viewer_row -= line_lengths[editor_row]
+        # done, now delete viewer_row so editor_row gets returned
+        viewer_row = 0
+    else: # editor_row != None
+        # convert from editor to viewer
+        viewer_row = sum(line_lengths[:editor_row])
+        # done, now delete editor_row so viewer_row gets returned
+        editor_row = 0
+    # after converting the one to the other we set the one to zero, so
+    #   this will return the other
+    return viewer_row or editor_row

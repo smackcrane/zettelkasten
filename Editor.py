@@ -11,7 +11,7 @@ import sys
 from Keys import Keys
 
 class Editor:
-    def __init__(self, win, filepath, row=1, col=0):
+    def __init__(self, win, filepath, row=0, col=0):
         # curses window we're living in
         self.win = win
         # load text from file as a list of lines (without trailing newlines)
@@ -23,9 +23,13 @@ class Editor:
         self.rows, self.cols = self.win.getmaxyx()
 
         # top line of text visible
-        self.top = 0
+        self.top = row
         # cursor position in self.lines (not in window)
-        self.row, self.col = row, col
+        if row > 0:
+            self.row = row
+        else:
+            self.row = 1    # top row (ID) is not editable
+        self.col = col
         # hidden column for up/down btwn lines of different length
         self.hidden_col = col
 
@@ -279,7 +283,7 @@ class Editor:
                 return flag, val
         # if no changes or confirmed above, proceed to viewer
         ID = self.filepath.split('/')[-1] # extract ID from filepath
-        flag, val = 'edit->open', ID
+        flag, val = 'edit->open', [ID, self.top]
         return flag, val
 
     def quit(self):
