@@ -49,12 +49,15 @@ class WindowStack:
         y, x = self.wins[-1].getbegyx()
         rows, cols = self.wins[-1].getmaxyx()
         # adjust coordinates out by 1 if possible
-        if y > 0: y -= 1
-        if x > 0: x -= 1
-        if y + rows + 2 < curses.LINES: rows += 2 # remember bottom row
-        elif y + rows + 1 < curses.LINES: rows += 1 # is status bar
-        if x + cols + 2 <= curses.COLS: cols += 2
-        elif x + cols + 1 <= curses.COLS: cols += 1
+        if y + rows + 1 < curses.LINES: rows += 1
+        # strict inequality above because bottom row reserved for status bar
+        if x + cols + 1 <= curses.COLS: cols += 1
+        if y > 0:
+            y -= 1
+            if y + rows + 1 < curses.LINES: rows += 1
+        if x > 0:
+            x -= 1
+            if x + cols + 1 <= curses.COLS: cols += 1
         temp = curses.newwin( rows,cols, y,x )
         temp.border()
         temp.refresh()
