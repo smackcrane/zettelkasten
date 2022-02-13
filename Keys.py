@@ -19,7 +19,9 @@ class Keys:
     CTRL_q = 17
     CTRL_s = 19
     CTRL_u = 21
+    CTRL_v = 22
     CTRL_w = 23
+    CTRL_x = 24
     ESC = 27
     SPACE = 32
     SHIFT_LEFT = 393

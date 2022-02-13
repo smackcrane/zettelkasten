@@ -36,6 +36,8 @@
 - Zettel must be written in proper YAML
 - `CTRL+a` (emacs-style) to jump to beginning of line, `CTRL+e` (emacs-style) to jump to end
 - `CTRL+s` (save) or `CTRL+w` (write) to save
+- `CTRL+x` (cut) to cut current line to clipboard
+- `CTRL+v` (paste) to paste last cut below current line (and repeat to paste previous cuts)
 - `CTRL+q` (quit) to close
 - `CTRL+o` (open) to change to viewing
 - `CTRL+n` (new) to create and edit new zettel

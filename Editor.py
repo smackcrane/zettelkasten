@@ -36,6 +36,9 @@ class Editor:
         # flag for search in progress
         self.searching = False
 
+        # clipboard for cutting and pasting, works as FIFO stack
+        self.clipboard = []
+
         # attribute for display
         self.attr = curses.A_NORMAL
 
@@ -310,6 +313,29 @@ class Editor:
         self.flash()    # flash window to confirm
         self.refresh()
 
+    def paste(self):
+        if len(self.clipboard) > 0:
+            # insert last elt of clipboard as new line after current line
+            line = self.clipboard.pop()
+            self.lines.insert(self.row + 1, line)
+            # move down and up to work out cursor postiion
+            self.down()
+            self.up()
+
+    def cut(self):
+        # cut current line to clipboard
+        line = self.lines.pop(self.row)
+        self.clipboard.append(line)
+        # work out line and cursor position
+        if self.row == len(self.lines):
+            self.up()
+        elif self.row == len(self.lines) - 1:
+            self.up()
+            self.down()
+        else:
+            self.down()
+            self.up()
+
     def insert(self, k):
         self.lines[self.row] = self.lines[self.row][:self.col] \
                 + chr(k) \
@@ -365,7 +391,9 @@ class Editor:
         elif k == Keys.CTRL_o:      flag, val = self.quit_to_viewer()
         elif k == Keys.CTRL_q:      flag, val = self.quit()
         elif k == Keys.CTRL_s:      self.save()
+        elif k == Keys.CTRL_v:      self.paste()
         elif k == Keys.CTRL_w:      self.save()
+        elif k == Keys.CTRL_x:      self.cut()
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
         elif k == Keys.CTRL_SHIFT_UP:    flag, val = 'expand', 'vertical'
