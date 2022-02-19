@@ -8,13 +8,22 @@
 ############################################################################
 
 import curses
+import time
 import utils
 import config
+from Keys import Keys
 from WindowStack import WindowStack
 from Index import Index
 from Editor import Editor
 from Viewer import Viewer
 from StatusBar import StatusBar
+
+def debugger(s):
+    return # to make debugger do nothing in commit
+    log = f'{config.path}/log'
+    with open(log, 'a') as f:
+        print(time.asctime(),file=f)
+        print(s+'\n', file=f)
 
 def main(screen):
     screen.refresh()
@@ -28,8 +37,8 @@ def main(screen):
     status = StatusBar(curses.newwin( 1,curses.COLS, curses.LINES-1,0 ))
 
     # standard size for subwindows: at most quarter-screen, at most 15x60
-    rows = min(15, curses.LINES//3)
-    cols = min(60, 3*curses.COLS//4)
+    std_rows = min(15, curses.LINES//3)
+    std_cols = min(60, 3*curses.COLS//4)
 
     while True:
         try:    # general error handling
@@ -41,6 +50,18 @@ def main(screen):
                 index.refresh()
                 stack.refresh()
             k = screen.getch()
+
+            # debugger
+            s = ''
+            known_keys = Keys.__dict__
+            for key in known_keys.keys():
+                if known_keys[key] == k:
+                    s = key
+            if not s:
+                s = chr(k)
+            debugger(f'keypress:\t{s}')
+            # end debugger
+
             # pass keypress to active window
             # and capture possible additional instructions
             status.keypress(k)
@@ -53,25 +74,25 @@ def main(screen):
                 # create new zettel
                 ID = utils.new_zettel()
                 # create an editor
-                y, x = stack.recommend(rows, cols)
+                y, x = stack.recommend(std_rows, std_cols)
                 stack.push(Editor(
-                    curses.newwin( rows,cols, y,x ),
+                    curses.newwin( std_rows,std_cols, y,x ),
                     config.kasten_dir+ID))
                 show_index = False
             elif flag == 'edit':
                 ID = val # expect val to be ID of zettel to edit
                 # create an editor
-                y, x = stack.recommend(rows, cols)
+                y, x = stack.recommend(std_rows, std_cols)
                 stack.push(Editor(
-                    curses.newwin( rows,cols, y,x ),
+                    curses.newwin( std_rows,std_cols, y,x ),
                     config.kasten_dir+ID))
                 show_index = False
             elif flag == 'open':
                 ID = val # expect val to be ID of zettel to edit
                 # create a viewer
-                y, x = stack.recommend(rows, cols)
+                y, x = stack.recommend(std_rows, std_cols)
                 stack.push(Viewer(
-                    curses.newwin( rows,cols, y,x ),
+                    curses.newwin( std_rows,std_cols, y,x ),
                     config.kasten_dir+ID))
                 show_index = False
             elif flag == 'edit->open': # change editor to viewer
@@ -147,10 +168,14 @@ def main(screen):
                 stack.shrink(val) # expect val = 'vertical', 'horizontal'
         except Exception as e:
             status.error(e)
+            debugger(f'error: {e}')
         except KeyboardInterrupt:
+            debugger(f'KeyboardInterrupt')
             status.error('KeyboardInterrupt: press any key to cancel, or KeyboardInterrupt again to quit')
             screen.getch() # not sure why two are needed, but doesn't
             screen.getch() # seem to work with just one?
 
 if __name__ == '__main__':
+    debugger('v'*15+'  START SESSION  '+'v'*15)
     curses.wrapper(main)
+    debugger('^'*16+'  END SESSION  '+'^'*16)
