@@ -26,9 +26,9 @@ def list_IDs_titles():
             try:
                 zettel = yaml.load(f, Loader=yaml.SafeLoader)
                 zett += [{'ID': ID, 'TITLE': zettel['TITLE']}]
-            except yaml.scanner.ScannerError:
+            except Exception as e:
                 zett += [{'ID': ID,
-                    'TITLE': '-'*15+' HELP MY YAML IS BROKEN '+'-'*15}]
+                    'TITLE': '----- ERROR ----- '+' '.join(str(e).split())}]
     return zett
 
 # load zettel from ID
@@ -117,6 +117,7 @@ def search_IDs_titles(search_text):
     if search_text[:1] == '/':
         search_text = search_text[1:]
         search_type = 'title'
+    # if search_text begins with '#', (remove it and) only search IDs
     elif search_text[:1] == '#':
         search_text = search_text[1:]
         search_type = 'ID'
