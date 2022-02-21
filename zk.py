@@ -142,6 +142,8 @@ def main(screen):
                 instruction = status.exec_command()
                 if instruction == 'count':
                     status.set(str(len(index.zett)))
+                elif instruction == 'sort':
+                    index.sort()
             elif flag == 'status':
                 status.set(val) # set text in status bar
             elif flag == 'quit':

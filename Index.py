@@ -77,6 +77,10 @@ class Index:
         else:
             return None
 
+    def sort(self):
+        self.zett.sort(key=lambda zettel: utils.ID_sort(zettel['ID']))
+        self.refresh()
+
     def update_list(self):
         self.zett = utils.list_IDs_titles()
         self.refresh()
