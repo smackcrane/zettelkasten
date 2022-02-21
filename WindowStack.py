@@ -30,14 +30,18 @@ class WindowStack:
     def __len__(self):
         return len(self.wins)
 
-    def debugger(self, s, state=False):
-        debug_file = '/dev/pts/3'
-        with open(debug_file, 'w') as f:
+    def debugger(self, s='', state=False, log=None, recursive=False):
+        if not log:
+            log = '/dev/pts/3'
+        with open(log, 'a') as f:
             print(s, file=f)
             if state:
                 print(f'self.wins:\n{self.wins}\n\n'
                         + f'self.dmap:\n{self.dmap}\n\n',
                         file=f)
+        if recursive:
+            for window in self.wins:
+                window.debugger(state=True, log=log)
 
     def refresh(self):
         if not self.wins: # if no windows, do nothing

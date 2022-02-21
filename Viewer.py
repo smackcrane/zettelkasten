@@ -33,9 +33,10 @@ class Viewer:
     def getmaxyx(self):
         return self.win.getmaxyx()
 
-    def debugger(self, s, state=False):
-        log_file = '/dev/pts/1'
-        with open(log_file, 'w') as f:
+    def debugger(self, s='', state=False, log=None):
+        if not log:
+            log = '/dev/pts/1'
+        with open(log, 'a') as f:
             print(s, file=f)
             if state:
                 print(f'self.filepath: {self.filepath}\n'

@@ -9,6 +9,7 @@
 
 import curses
 import time
+import traceback
 import utils
 import config
 from Keys import Keys
@@ -18,9 +19,9 @@ from Editor import Editor
 from Viewer import Viewer
 from StatusBar import StatusBar
 
-def debugger(s):
-    return # to make debugger do nothing in commit
-    log = f'{config.path}/log'
+def debugger(s='', log=None):
+    if not log:
+        log = config.logfile
     with open(log, 'a') as f:
         print(time.asctime(),file=f)
         print(s+'\n', file=f)
@@ -59,7 +60,8 @@ def main(screen):
                     s = key
             if not s:
                 s = chr(k)
-            debugger(f'keypress:\t{s}')
+            # leave this debugging out of commit
+            #debugger(f'keypress:\t{s}')
             # end debugger
 
             # pass keypress to active window
@@ -168,7 +170,11 @@ def main(screen):
                 stack.shrink(val) # expect val = 'vertical', 'horizontal'
         except Exception as e:
             status.error(e)
-            debugger(f'error: {e}')
+            debugger(f'error: {e}', log=config.logfile)
+            status.debugger(state=True, log=config.logfile)
+            index.debugger(state=True, log=config.logfile)
+            stack.debugger(state=True, log=config.logfile, recursive=True)
+            debugger(traceback.format_exc(), log=config.logfile)
         except KeyboardInterrupt:
             debugger(f'KeyboardInterrupt')
             status.error('KeyboardInterrupt: press any key to cancel, or KeyboardInterrupt again to quit')

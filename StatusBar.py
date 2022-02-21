@@ -28,9 +28,10 @@ class StatusBar:
 
         self.refresh()
 
-    def debugger(self, s, state=False):
-        log = '/dev/pts/4'
-        with open(log, 'w') as f:
+    def debugger(self, s='', state=False, log=None):
+        if not log:
+            log = '/dev/pts/4'
+        with open(log, 'a') as f:
             print(s, file=f)
             if state:
                 print(f'self.text: {self.text}\n'

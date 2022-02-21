@@ -38,9 +38,10 @@ class Index:
     def getmaxyx(self):
         return self.win.getmaxyx()
 
-    def debugger(self, s, state=False):
-        log = '/dev/pts/5'
-        with open(log, 'w') as f:
+    def debugger(self, s='', state=False, log=None):
+        if not log:
+            log = '/dev/pts/5'
+        with open(log, 'a') as f:
             print(s, file=f)
             if state:
                 print(f'self.row: {self.row}\n'
