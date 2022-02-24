@@ -48,14 +48,23 @@ def load_zettel(ID):
     return zettel
 
 # list IDs of zettel that link to target ID
-def list_backlinks(target):
+def list_backlinks(target_ID):
     IDs = os.listdir(kasten_dir)    # get list of IDs
-    link = re.compile(f'#{target}') # regex to match link to target ID
+    target_link = re.compile(f'#{target_ID}') # regex for links to target ID
     backlinks = []
+
+    # get list of links in zettel (to exclude from backlinks)
+    with open(kasten_dir+target_ID, 'r') as f:
+        link = re.compile(r'#\d+[a-z]+')    # regex to match links in notes
+        text = f.read()
+        frontlinks = [link_ID.lstrip('#') for link_ID in link.findall(text)]
+
     for ID in IDs:
+        if ID in frontlinks:
+            continue # skip IDs that already exist as forward links
         with open(kasten_dir+ID, 'r') as f:
             text = f.read()
-        match = link.search(text)   # search for link in filetext
+        match = target_link.search(text)   # search for link in filetext
         if match:
             backlinks.append(ID)    # if we found one, add ID to list
     return backlinks
