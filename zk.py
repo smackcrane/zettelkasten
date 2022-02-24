@@ -37,9 +37,9 @@ def main(screen):
     # create status bar at bottom row, not in window stack
     status = StatusBar(curses.newwin( 1,curses.COLS, curses.LINES-1,0 ))
 
-    # standard size for subwindows: at most quarter-screen, at most 15x60
-    std_rows = min(15, curses.LINES//3)
-    std_cols = min(60, 3*curses.COLS//4)
+    # standard size for subwindows: at most quarter-screen, at most 20x70
+    std_rows = min(20, curses.LINES//2)
+    std_cols = min(70, curses.COLS//2)
 
     while True:
         try:    # general error handling

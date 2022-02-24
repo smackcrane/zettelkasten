@@ -388,6 +388,9 @@ class Editor:
         elif k == Keys.BACKSPACE:   self.backspace()
         elif k == Keys.TAB:         self.tab()
         elif k == Keys.RETURN:      self.newline()
+        elif k == Keys.ESC:
+            self.save()
+            flag, val = self.quit_to_viewer()
         elif k == Keys.CTRL_n:      flag, val = 'new', None
         elif k == Keys.CTRL_o:      flag, val = self.quit_to_viewer()
         elif k == Keys.CTRL_q:      flag, val = self.quit()

@@ -133,7 +133,7 @@ def search_IDs_titles(search_text):
                     # caution: oversize load
                     if (search_type == 'title' and search_text.lower() in zettel['TITLE'].lower()) or (search_type == 'ID' and search_text.lower() in ID):
                         zett.append({'ID':ID, 'TITLE': zettel['TITLE']})
-                except yaml.scanner.ScannerError:
+                except:
                     # if we can't read the yaml then just ignore it
                     pass
             else: # search_type == 'full_text'
