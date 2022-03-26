@@ -26,6 +26,7 @@ class Keys:
     SPACE = 32
     SHIFT_LEFT = 393
     SHIFT_RIGHT = 402
+    RESIZE = 410
     CTRL_DOWN = 525
     CTRL_UP = 566
     CTRL_SHIFT_DOWN = 526

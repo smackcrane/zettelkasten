@@ -33,13 +33,16 @@ def main(screen):
 
     # create index window, not in window stack
     index = Index(curses.newwin(curses.LINES-1,curses.COLS))
-    show_index = True   # flag to show index window or not
+    show_index = False   # flag to show index window or not
     # create status bar at bottom row, not in window stack
     status = StatusBar(curses.newwin( 1,curses.COLS, curses.LINES-1,0 ))
 
     # standard size for subwindows: at most quarter-screen, at most 20x70
     std_rows = min(20, curses.LINES//2)
     std_cols = min(70, curses.COLS//2)
+
+    # for error handling
+    error_loop = False
 
     while True:
         try:    # general error handling
@@ -51,18 +54,16 @@ def main(screen):
                 index.refresh()
                 stack.refresh()
             k = screen.getch()
+            # if we've made it here, we're not in an infinite loop
+            error_loop = False
 
-            # debugger
-            s = ''
-            known_keys = Keys.__dict__
-            for key in known_keys.keys():
-                if known_keys[key] == k:
-                    s = key
-            if not s:
-                s = chr(k)
-            # leave this debugging out of commit
-            #debugger(f'keypress:\t{s}')
-            # end debugger
+            # if resize, then resize
+            if k == Keys.RESIZE:
+                y, x = screen.getmaxyx()
+                stack.resize( y,x )
+                index.resize( y,x )
+                status.resize( y,x )
+                continue
 
             # pass keypress to active window
             # and capture possible additional instructions
@@ -79,7 +80,8 @@ def main(screen):
                 y, x = stack.recommend(std_rows, std_cols)
                 stack.push(Editor(
                     curses.newwin( std_rows,std_cols, y,x ),
-                    config.kasten_dir+ID))
+                    config.kasten_dir+ID,
+                    row=1, col=7))  # place cursor in TITLE field
                 show_index = False
             elif flag == 'edit':
                 ID = val # expect val to be ID of zettel to edit
@@ -177,6 +179,13 @@ def main(screen):
             index.debugger(state=True, log=config.logfile)
             stack.debugger(state=True, log=config.logfile, recursive=True)
             debugger(traceback.format_exc(), log=config.logfile)
+            if error_loop:
+                # if we're in an infinite loop, let the error through
+                raise
+            else:
+                # flag possible error loop, if it's still true next ieration
+                #   then we're in an infinite loop
+                error_loop = True
         except KeyboardInterrupt:
             debugger(f'KeyboardInterrupt')
             status.error('KeyboardInterrupt: press any key to cancel, or KeyboardInterrupt again to quit')

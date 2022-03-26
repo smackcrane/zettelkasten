@@ -13,6 +13,7 @@ class StatusBar:
     def __init__(self, win):
         # curses window we're living in
         self.win = win
+        _, self.cols = self.win.getmaxyx()
         # text to display
         self.text = ''
         # search text when searching
@@ -47,7 +48,7 @@ class StatusBar:
         self.win.erase()
         curses.curs_set(0) # hide cursor
         # pad with spaces to light up whole bar
-        display = text + ' '*curses.COLS
+        display = text + ' '*self.cols
         self.win.insstr( 0,0, display, self.attr )
         self.win.refresh()
 
@@ -133,6 +134,11 @@ class StatusBar:
             self.text += chr(k)
             self.search_text += chr(k)
             self.command_text += chr(k)
+        self.refresh()
+
+    def resize(self, screen_rows, screen_cols):
+        self.cols = screen_cols
+        self.win = curses.newwin( 1,screen_cols, screen_rows-1,0 )
         self.refresh()
 
     def keypress(self, k):

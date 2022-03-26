@@ -7,6 +7,7 @@
 
 import curses
 import numpy as np
+import config
 
 # possible annoyance: everything breaks if self.wins is empty
 class WindowStack:
@@ -16,23 +17,26 @@ class WindowStack:
         self.wins = []
         # initialize density map of windows in screen
         rows, cols = screen.getmaxyx()
-        self.dmap = np.zeros((rows, cols), dtype=np.int16)
+        self.dmap, self.window_density = self.initialize_densities( rows,cols )
+
+    def initialize_densities(self, rows, cols):
+        dmap = np.zeros((rows, cols), dtype=np.int16)
 
         # initialize density contribution of each new window
         density = lambda y,x: int(rows-y + cols-x)
-        self.window_density = np.array(
+        window_density = np.array(
                 [[density(y,x) for x in range(cols)] for y in range(rows)],
                 dtype=np.int16
                 )
-        self.dmap += self.window_density # starting density
-
+        dmap += window_density # starting density
+        return dmap, window_density
 
     def __len__(self):
         return len(self.wins)
 
     def debugger(self, s='', state=False, log=None, recursive=False):
         if not log:
-            log = '/dev/pts/3'
+            log = config.logfile
         with open(log, 'a') as f:
             print(s, file=f)
             if state:
@@ -176,6 +180,33 @@ class WindowStack:
             cols -= left + right
         window.resize( rows,cols, y,x )
         self.push(window)
+
+    def resize(self, screen_rows, screen_cols):
+        old_wins = [win for win in self.wins]
+        self.wins = []
+        self.dmap, self.window_density = self.initialize_densities(
+                                                screen_rows,screen_cols
+                                                )
+        self.debugger(state=True)
+        for window in old_wins:
+            y, x = window.getbegyx()
+            rows, cols = window.getmaxyx()
+            while y + rows > screen_rows - 1:
+                # if the window goes off-screen, try moving up
+                if y > 0:
+                    y = max(0, screen_rows - rows - 1)
+                # if we can't move up enough, also shrink
+                else:
+                    rows = min(rows, screen_rows - 1)
+            while x + cols > screen_cols:
+                # if the window goes off-screen, try moving left
+                if x > 0:
+                    x = max(0, screen_cols - cols)
+                # if we can't move left enough, also shrink
+                else:
+                    cols = min(cols, screen_cols)
+            window.resize( rows,cols, y,x )
+            self.push(window)
 
     def keypress(self, k):
         return self.wins[-1].keypress(k)

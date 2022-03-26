@@ -5,7 +5,9 @@
 #
 ############################################################################
 
+import traceback
 import curses
+import config
 import utils
 from Keys import Keys
 
@@ -27,9 +29,6 @@ class Index:
         # compile list of zettel IDs and titles
         self.zett = utils.list_IDs_titles()
 
-        # make cursor invisible
-        curses.curs_set(0)
-
         self.refresh()
 
     def getbegyx(self):
@@ -40,7 +39,7 @@ class Index:
 
     def debugger(self, s='', state=False, log=None):
         if not log:
-            log = '/dev/pts/5'
+            log = config.logfile
         with open(log, 'a') as f:
             print(s, file=f)
             if state:
@@ -101,6 +100,11 @@ class Index:
                 self.win.insstr( j,0, self.zett[i]['ID'].ljust(9))
         curses.curs_set(0) # hide cursor
         self.win.refresh()
+
+    def resize(self, screen_rows, screen_cols):
+        self.rows, self.cols = screen_rows - 1, screen_cols
+        self.win = curses.newwin(self.rows, self.cols)
+        self.refresh()
 
     def keypress(self, k):
         flag, val = None, None
