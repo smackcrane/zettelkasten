@@ -20,6 +20,7 @@ class WindowStack:
         self.dmap, self.window_density = self.initialize_densities( rows,cols )
 
     def initialize_densities(self, rows, cols):
+        rows -= 1 # leave bottom row empty to keep status bar visible
         dmap = np.zeros((rows, cols), dtype=np.int16)
 
         # initialize density contribution of each new window
@@ -182,6 +183,7 @@ class WindowStack:
         self.push(window)
 
     def resize(self, screen_rows, screen_cols):
+        screen_rows -= 1 # leave bottom row empty to keep status bar visible
         old_wins = [win for win in self.wins]
         self.wins = []
         self.dmap, self.window_density = self.initialize_densities(
