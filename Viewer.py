@@ -8,6 +8,7 @@
 import curses
 import re
 import sys
+import os
 import utils
 from Keys import Keys
 
@@ -63,8 +64,11 @@ class Viewer:
                 for x in range(0, len(line), self.cols):
                     self.lines.append(line[x:x+self.cols])
 
-        # create list of links, each a dict of ID and start coords
+        # create list of zk links, hyperlinks, and file links
+        #   each a dict of ID(/url/filepath), start coords, and label
         ref = re.compile(r'#\d+[a-z]+')
+        hyperref = re.compile(r'https?://\S+')
+        fileref = re.compile(r'~/[-_a-zA-Z0-9/]+\.[a-zA-Z]+')
         self.links = []
         for i, line in enumerate(raw_lines):
             for link in ref.finditer(line):
@@ -75,6 +79,26 @@ class Viewer:
                     'row': row,
                     'col': col
                     })
+            for link in hyperref.finditer(line):
+                row = sum(line_lengths[:i]) + (link.start() // self.cols)
+                col = link.start() % self.cols
+                self.links.append({
+                    'ID': link.group(),
+                    'row': row,
+                    'col': col,
+                    'url': True
+                    })
+            for link in fileref.finditer(line):
+                row = sum(line_lengths[:i]) + (link.start() // self.cols)
+                col = link.start() % self.cols
+                self.links.append({
+                    'ID': link.group(),
+                    'row': row,
+                    'col': col,
+                    'file': True
+                    })
+        # sort links by position in text
+        self.links.sort(key=lambda l: [l['row'], l['col']])
 
         # search for backlinks
         my_ID = self.filepath.split('/')[-1]
@@ -177,9 +201,22 @@ class Viewer:
         # open active link for viewing
         if self.link == -1:
             return None, None
-        ID = self.links[self.link]['ID'].lstrip('#')
-        flag, val = 'open', ID
-        return flag, val
+        link = self.links[self.link]
+        if 'url' in link: # if it's a URL, open with firefox
+            url = link['ID']
+            os.system(f'firefox {url} >/dev/null 2>&1 &')
+            return None, None
+        elif 'file' in link: # if it's a file, try qpdfview for .jpg/.pdf
+            path = link['ID']
+            assert path[-4:] in ['.jpg', '.pdf'], f"""
+                                don't know how to open file {path}
+                                """
+            os.system(f'qpdfview {path} >/dev/null 2>&1 &')
+            return None, None
+        else: # if it's a zk link, pass back to zk.py to open
+            ID = self.links[self.link]['ID'].lstrip('#')
+            flag, val = 'open', ID
+            return flag, val
 
     def resize(self, rows,cols, y,x ):
         oldwin = self.win
