@@ -269,7 +269,7 @@ class Viewer:
             self.refresh()
         elif k == Keys.CTRL_SHIFT_UP:    flag, val = 'expand', 'vertical'
         elif k == Keys.CTRL_SHIFT_DOWN:  flag, val = 'shrink', 'vertical'
-        elif k == Keys.CTRL_SHIFT_LEFT:  flag, val = 'expand', 'horizontal'
-        elif k == Keys.CTRL_SHIFT_RIGHT: flag, val = 'shrink', 'horizontal'
+        elif k == Keys.CTRL_SHIFT_RIGHT: flag, val = 'expand', 'horizontal'
+        elif k == Keys.CTRL_SHIFT_LEFT:  flag, val = 'shrink', 'horizontal'
 
         return flag, val
