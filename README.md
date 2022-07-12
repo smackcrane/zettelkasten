@@ -28,8 +28,8 @@
 
 - Type to insert text
 - Zettel must be written in proper YAML (usually just write notes indented in `BODY:` field)
-- `CTRL+s` (save) or `CTRL+w` (write) to save
-- `CTRL+q` (quit) to close
+- `CTRL+s` (save) to save
+- `CTRL+w` (browser/etc-style) to close
 - `CTRL+x` (cut) to cut current line to clipboard
 - `CTRL+v` (paste) to paste last cut below current line (and repeat to paste previous cuts)
 - `CTRL+o` (open) to change to viewing

@@ -396,7 +396,7 @@ class Editor:
         elif k == Keys.CTRL_q:      flag, val = self.quit()
         elif k == Keys.CTRL_s:      self.save()
         elif k == Keys.CTRL_v:      self.paste()
-        elif k == Keys.CTRL_w:      self.save()
+        elif k == Keys.CTRL_w:      flag, val = self.quit()
         elif k == Keys.CTRL_x:      self.cut()
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
