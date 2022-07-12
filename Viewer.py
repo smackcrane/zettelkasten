@@ -14,6 +14,7 @@ import sys
 import os
 import utils
 from Keys import Keys
+import config
 
 class Viewer:
     def __init__(self, win, filepath, top=0):
@@ -235,9 +236,28 @@ class Viewer:
             os.system(f'qpdfview {path} >/dev/null 2>&1 &')
             return None, None
         else: # if it's a zk link, pass back to zk.py to open
-            ID = self.links[self.link]['ID'].lstrip('#')
+            ID = link['ID'].lstrip('#')
             flag, val = 'open', ID
             return flag, val
+
+    # open new zettel in same window, closing previous zettel
+    def go(self):
+        # if no link is selected, do nothing
+        if self.link == -1:
+            return None, None
+        link = self.links[self.link]
+        # or if it's a url or file, do nothing
+        if 'url' in link or 'file' in link:
+            return None, None
+        # at this point it should be a zk link
+        ID = link['ID'].lstrip('#')
+        # set new filepath and reload
+        self.filepath = config.kasten_dir+ID
+        self.link = -1
+        self.top = 0
+        self.load()
+        self.refresh()
+        return None, None
 
     def resize(self, rows,cols, y,x ):
         oldwin = self.win
@@ -270,6 +290,7 @@ class Viewer:
         elif k == ord('e'):
             ID = self.filepath.split('/')[-1] # extract ID from filepath
             flag, val = 'open->edit', [ID, self.top]
+        elif k == ord('g'):         flag, val = self.go()
         elif k == ord('o'):         flag, val = self.open_link()
         elif k == ord('r'):
             self.load()
