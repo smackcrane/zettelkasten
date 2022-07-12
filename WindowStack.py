@@ -21,15 +21,15 @@ class WindowStack:
 
     def initialize_densities(self, rows, cols):
         rows -= 1 # leave bottom row empty to keep status bar visible
-        dmap = np.zeros((rows, cols), dtype=np.int16)
+        dmap = np.zeros((rows, cols), dtype=np.int64)
 
         # initialize density contribution of each new window
         density = lambda y,x: int(rows-y + cols-x)
         window_density = np.array(
                 [[density(y,x) for x in range(cols)] for y in range(rows)],
-                dtype=np.int16
+                dtype=np.int64
                 )
-        dmap += window_density # starting density
+        #dmap += window_density # starting density
         return dmap, window_density
 
     def __len__(self):
@@ -95,7 +95,7 @@ class WindowStack:
     # recommend coordinates for a new window
     # takes rows, cols dimensions for a new window
     # returns y, x upper-left coordinates for recommended placement
-    def recommend(self, rows, cols):
+    def old_recommend(self, rows, cols):
         # compute mass of each rows x cols rectangle and choose the smallest
         # strat: taking cumulative sum of rows and then cumulative sum of 
         #   columns gives an array whose entries are cumulative sum of the 
@@ -127,6 +127,18 @@ class WindowStack:
         y, x = divmod(index, mass_cols) # also argmin flattens, so unflatten
         return y, x
 
+    def recommend(self, rows, cols):
+        density = self.window_density[:rows, :cols]
+        scr_rows, scr_cols = self.dmap.shape
+        candidate = [0,0]
+        candidate_score = np.multiply(density, self.dmap[:rows,:cols]).sum()
+        for x in range(scr_cols - cols):
+            for y in range(scr_rows - rows):
+                score = np.multiply(density, self.dmap[y:y+rows,x:x+cols]).sum()
+                if score <= candidate_score:
+                    candidate_score = score
+                    candidate = [y,x]
+        return candidate
 
     def up(self):
         self.wins.append(self.wins.pop(0))
