@@ -229,7 +229,7 @@ class Viewer:
             return None, None
         elif 'file' in link: # if it's a file, try qpdfview for .jpg/.pdf
             path = link['ID']
-            assert path[-4:] in ['.jpg', '.pdf'], f"""
+            assert path[-4:] in ['.jpg', '.png', '.pdf'], f"""
                                 don't know how to open file {path}
                                 """
             os.system(f'qpdfview {path} >/dev/null 2>&1 &')
@@ -250,7 +250,13 @@ class Viewer:
     def keypress(self, k):
         flag, val = None, None
         if k == Keys.UP:            self.up()
+        elif k == Keys.CTRL_u:
+            for _ in range(10):
+                self.up()
         elif k == Keys.DOWN:        self.down()
+        elif k == Keys.CTRL_d:
+            for _ in range(10):
+                self.down()
         elif k == Keys.LEFT:        flag, val = self.left()
         elif k == Keys.RIGHT:       flag, val = self.right()
         elif k == Keys.RETURN:      flag, val = self.open_link()

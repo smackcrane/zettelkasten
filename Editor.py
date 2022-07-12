@@ -391,10 +391,16 @@ class Editor:
         elif k == Keys.ESC:
             self.save()
             flag, val = self.quit_to_viewer()
+        elif k == Keys.CTRL_d:
+            for _ in range(10):
+                self.down()
         elif k == Keys.CTRL_n:      flag, val = 'new', None
         elif k == Keys.CTRL_o:      flag, val = self.quit_to_viewer()
         elif k == Keys.CTRL_q:      flag, val = self.quit()
         elif k == Keys.CTRL_s:      self.save()
+        elif k == Keys.CTRL_u:
+            for _ in range(10):
+                self.up()
         elif k == Keys.CTRL_v:      self.paste()
         elif k == Keys.CTRL_w:      flag, val = self.quit()
         elif k == Keys.CTRL_x:      self.cut()
