@@ -21,6 +21,7 @@ class Viewer:
         self.win = win # curses window we're living in
         self.rows, self.cols = self.win.getmaxyx() # dimensions of window
         self.filepath = filepath
+        self.previous = [] # list of previous filepaths, to go back
 
         # keep track of which link cursor is on (default -1 means none)
         self.link = -1
@@ -251,8 +252,21 @@ class Viewer:
             return None, None
         # at this point it should be a zk link
         ID = link['ID'].lstrip('#')
-        # set new filepath and reload
+        # save old filepath, set new filepath, reload
+        self.previous.append(self.filepath)
         self.filepath = config.kasten_dir+ID
+        self.link = -1
+        self.top = 0
+        self.load()
+        self.refresh()
+        return None, None
+
+    # back to previous zettel, reverse of go()
+    def back(self):
+        if not self.previous:
+            # if no previous filepath, do nothing
+            return None, None
+        self.filepath = self.previous.pop()
         self.link = -1
         self.top = 0
         self.load()
@@ -287,6 +301,7 @@ class Viewer:
         elif k == Keys.CTRL_q:      flag, val = 'quit', None
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None
+        elif k == ord('b'):         flag, val = self.back()
         elif k == ord('e'):
             ID = self.filepath.split('/')[-1] # extract ID from filepath
             flag, val = 'open->edit', [ID, self.top]

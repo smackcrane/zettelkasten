@@ -22,7 +22,9 @@
 - Select links with `LEFT`/`RIGHT` arrow keys
 - `e` (edit) to change to editing
 - `r` (refresh) to refresh (e.g. in case of new backlinks)
-- `ENTER` to open selected link for viewing
+- `ENTER` to open selected link for viewing in new window
+- `g` (go) to open selected link in same window (closing previous zettel)
+- `b` (back) to return to previous zettel after `g`
 
 ### Editor Window
 
