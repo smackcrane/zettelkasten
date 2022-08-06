@@ -91,7 +91,7 @@ class Viewer:
         #   each a dict of ID(/url/filepath), start coords, and label
         ref = re.compile(r'#\d+[a-z]+')
         hyperref = re.compile(r'https?://\S+')
-        fileref = re.compile(r'~/[-_a-zA-Z0-9/]+\.[a-zA-Z]+')
+        fileref = re.compile(r'~/[-_a-zA-Z0-9/]+(\.|\*)[a-zA-Z]*')
         self.links = []
         for i, line in enumerate(raw_lines):
             for link in ref.finditer(line):
@@ -229,11 +229,11 @@ class Viewer:
             url = link['ID']
             os.system(f'firefox {url} >/dev/null 2>&1 &')
             return None, None
-        elif 'file' in link: # if it's a file, try qpdfview for .jpg/.pdf
+        elif 'file' in link: # if it's a file, try qpdfview
             path = link['ID']
-            assert path[-4:] in ['.jpg', '.png', '.pdf'], f"""
-                                don't know how to open file {path}
-                                """
+            #assert path[-4:] in ['.jpg', '.png', '.pdf'], f"""
+            #                    don't know how to open file {path}
+            #                    """
             os.system(f'qpdfview {path} >/dev/null 2>&1 &')
             return None, None
         else: # if it's a zk link, pass back to zk.py to open
