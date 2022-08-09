@@ -8,6 +8,7 @@
 import curses
 import numpy as np
 import config
+from Editor import Editor
 
 # possible annoyance: everything breaks if self.wins is empty
 class WindowStack:
@@ -221,6 +222,17 @@ class WindowStack:
                     cols = min(cols, screen_cols)
             window.resize( rows,cols, y,x )
             self.push(window)
+
+    # check if ok to quit, failing if there is an editor window open
+    def quit_ok(self):
+        for win in self.wins:
+            if isinstance(win, Editor):
+                return False
+        return True
+
+    # return a list of zettel filepaths that are open
+    def list_filepaths(self):
+        return [win.filepath for win in self.wins]
 
     def keypress(self, k):
         return self.wins[-1].keypress(k)

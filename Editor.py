@@ -271,14 +271,14 @@ class Editor:
         self.hidden_col = self.col
         self.refresh()
 
-    def quit_to_viewer(self):
+    def to_viewer(self):
         # check for changes by loading (& stripping) file text again
         with open(self.filepath, 'r') as f:
             file_text = f.readlines()
         file_text = [line.rstrip('\n') for line in file_text]
-        # prompt if quit without saving
+        # prompt if close without saving
         if self.lines != file_text:
-            self.win.insstr(0,0," Quit without saving? ",curses.A_REVERSE)
+            self.win.insstr(0,0," Close without saving? ",curses.A_REVERSE)
             self.win.refresh()
             k = self.win.getch()
             if k != Keys.CTRL_o: # anything but CTRL+o, go back
@@ -290,22 +290,22 @@ class Editor:
         flag, val = 'edit->open', [ID, self.top]
         return flag, val
 
-    def quit(self):
+    def close(self):
         # check for changes by loading (& stripping) file text again
         with open(self.filepath, 'r') as f:
             file_text = f.readlines()
         file_text = [line.rstrip('\n') for line in file_text]
-        # prompt if quit without saving
+        # prompt if close without saving
         if self.lines != file_text:
-            self.win.insstr(0,0," Quit without saving? ",curses.A_REVERSE)
+            self.win.insstr(0,0," Close without saving? ",curses.A_REVERSE)
             self.win.refresh()
             k = self.win.getch()
-            if k != Keys.CTRL_q: # anything but CTRL+q, go back
+            if k != Keys.CTRL_w: # anything but CTRL+w, go back
                 self.refresh()
                 flag, val = None, None
                 return flag, val
-        # if no changes or confirmed above, proceed to quit
-        flag, val = 'quit', None
+        # if no changes or confirmed above, proceed to close
+        flag, val = 'close_window', None
         return flag, val
 
     def save(self):
@@ -390,19 +390,19 @@ class Editor:
         elif k == Keys.RETURN:      self.newline()
         elif k == Keys.ESC:
             self.save()
-            flag, val = self.quit_to_viewer()
+            flag, val = self.to_viewer()
         elif k == Keys.CTRL_d:
             for _ in range(10):
                 self.down()
         elif k == Keys.CTRL_n:      flag, val = 'new', None
-        elif k == Keys.CTRL_o:      flag, val = self.quit_to_viewer()
-        elif k == Keys.CTRL_q:      flag, val = self.quit()
+        elif k == Keys.CTRL_o:      flag, val = self.to_viewer()
+        elif k == Keys.CTRL_q:      flag, val = 'quit', None
         elif k == Keys.CTRL_s:      self.save()
         elif k == Keys.CTRL_u:
             for _ in range(10):
                 self.up()
         elif k == Keys.CTRL_v:      self.paste()
-        elif k == Keys.CTRL_w:      flag, val = self.quit()
+        elif k == Keys.CTRL_w:      flag, val = self.close()
         elif k == Keys.CTRL_x:      self.cut()
         elif k == Keys.CTRL_UP:     flag, val = 'window_up', None
         elif k == Keys.CTRL_DOWN:   flag, val = 'window_down', None

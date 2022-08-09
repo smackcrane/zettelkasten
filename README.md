@@ -7,6 +7,7 @@
 - `CTRL+UP` and `CTRL+DOWN` to cycle through windows (not including index)
 - `CTRL+g` (home) to hide/show index window (alas `CTRL+h` is backspace)
 - `CTRL+n` (new) to create and edit new zettel
+- `CTRL+q` (quit) to quit, saving state
 
 ### Index Window
 
@@ -25,13 +26,14 @@
 - `ENTER` to open selected link for viewing in new window
 - `g` (go) to open selected link in same window (closing previous zettel)
 - `b` (back) to return to previous zettel after `g`
+- `CTRL+w` (browser/tab-style) to close
 
 ### Editor Window
 
 - Type to insert text
 - Zettel must be written in proper YAML (usually just write notes indented in `BODY:` field)
 - `CTRL+s` (save) to save
-- `CTRL+w` (browser/etc-style) to close
+- `CTRL+w` (browser/tab-style) to close
 - `CTRL+x` (cut) to cut current line to clipboard
 - `CTRL+v` (paste) to paste last cut below current line (and repeat to paste previous cuts)
 - `CTRL+o` (open) to change to viewing

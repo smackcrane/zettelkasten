@@ -5,3 +5,4 @@ __pycache__
 kasten/
 .logfile
 *log
+.stack_save

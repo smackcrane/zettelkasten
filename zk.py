@@ -10,6 +10,7 @@
 import curses
 import time
 import traceback
+from ruamel import yaml
 import utils
 import config
 from Keys import Keys
@@ -40,6 +41,19 @@ def main(screen):
     # standard size for subwindows: at most quarter-screen, at most 20x70
     std_rows = min(20, curses.LINES//2)
     std_cols = min(70, curses.COLS//2)
+
+    # load saved list of open zettel
+    try:
+        with open(config.stack_save, 'r') as f:
+            filepaths = yaml.load(f, Loader=yaml.SafeLoader)
+        for filepath in filepaths:
+                # create a viewer
+                y, x = stack.recommend(std_rows, std_cols)
+                stack.push(Viewer(
+                    curses.newwin( std_rows,std_cols, y,x ),
+                    filepath))
+    except:
+        status.set(f'Could not load {config.stack_save}')
 
     # for error handling
     error_loop = False
@@ -148,15 +162,25 @@ def main(screen):
                     index.sort()
             elif flag == 'status':
                 status.set(val) # set text in status bar
+            elif flag == 'close_window':
+                stack.pop()
             elif flag == 'quit':
-                if val == 'Index' and len(stack) > 1:
-                    # don't kill index unless it's the last window
-                    pass
-                elif val == 'Index':
-                    # if it is the last window, quit altogether
+                # attempt to save and quit, failing if there is an editor
+                if stack.quit_ok():
+                    filepaths = stack.list_filepaths()
+                    with open(config.stack_save, 'w') as f:
+                        yaml.dump(filepaths, f)
                     break
                 else:
-                    stack.pop()
+                    status.set('Quit failed, close editors')
+            #    if val == 'Index' and len(stack) > 1:
+            #        # don't kill index unless it's the last window
+            #        pass
+            #    elif val == 'Index':
+            #        # if it is the last window, quit altogether
+            #        break
+            #    else:
+            #        stack.pop()
             elif flag == 'window_up':
                 if show_index:
                     show_index = False

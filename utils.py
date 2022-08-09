@@ -5,7 +5,7 @@
 #
 ############################################################################
 
-import yaml
+from ruamel import yaml
 import datetime
 import re
 import os
