@@ -31,7 +31,6 @@
 ### Editor Window
 
 - Type to insert text
-- Zettel must be written in proper YAML (usually just write notes indented in `BODY:` field)
 - `CTRL+s` (save) to save
 - `CTRL+w` (browser/tab-style) to close
 - `CTRL+x` (cut) to cut current line to clipboard

@@ -5,7 +5,6 @@
 #
 ############################################################################
 
-from ruamel import yaml
 import curses
 import re
 import io
@@ -53,29 +52,13 @@ class Viewer:
                 print(self.lines, file=f)
 
     def load(self):
-        try:
-            # if the zettel has code, try to execute it and display results
-            with open(self.filepath, 'r') as f:
-                data = yaml.load(f, Loader=yaml.RoundTripLoader)
-                assert 'CODE' in data, "if not then skip to except block"
-                code = data['CODE']
-                with io.StringIO() as out, redirect_stdout(out):
-                    exec(code)
-                    output = out.getvalue()
-                data['CODE'] = output
-                raw_lines = yaml.dump(
-                                    data,
-                                    Dumper=yaml.RoundTripDumper
-                                    ).splitlines()
-        except Exception as e:
-            # load text from file as a list of lines
-            #   then break into lines of window length
-            with open(self.filepath, 'r') as f:
-                raw_lines = f.readlines()
-                raw_lines = [line.rstrip('\n') for line in raw_lines]
-            # if there was an unknown error, add a message to end of zettel
-            if type(e) != AssertionError:
-                raw_lines.append(f'ERROR: {e}')
+        #TODO: if the zettel has code, try to execute it and display results
+
+        # load text from file as a list of lines
+        #   then break into lines of window length
+        with open(self.filepath, 'r') as f:
+            raw_lines = f.readlines()
+            raw_lines = [line.rstrip('\n') for line in raw_lines]
         self.lines = []
         line_lengths = [] # to translate between raw_lines and self.lines
         for line in raw_lines:

@@ -10,7 +10,6 @@
 import curses
 import time
 import traceback
-from ruamel import yaml
 import utils
 import config
 from Keys import Keys
@@ -45,7 +44,7 @@ def main(screen):
     # load saved list of open zettel
     try:
         with open(config.stack_save, 'r') as f:
-            filepaths = yaml.load(f, Loader=yaml.SafeLoader)
+            filepaths = [line.rstrip() for line in f.readlines()]
         for filepath in filepaths:
                 # create a viewer
                 y, x = stack.recommend(std_rows, std_cols)
@@ -94,8 +93,7 @@ def main(screen):
                 y, x = stack.recommend(std_rows, std_cols)
                 stack.push(Editor(
                     curses.newwin( std_rows,std_cols, y,x ),
-                    config.kasten_dir+ID,
-                    row=1, col=7))  # place cursor in TITLE field
+                    config.kasten_dir+ID))
                 show_index = False
             elif flag == 'edit':
                 ID = val # expect val to be ID of zettel to edit
@@ -169,7 +167,7 @@ def main(screen):
                 if stack.quit_ok():
                     filepaths = stack.list_filepaths()
                     with open(config.stack_save, 'w') as f:
-                        yaml.dump(filepaths, f)
+                        f.write('\n'.join(filepaths))
                     break
                 else:
                     status.set('Quit failed, close editors')
