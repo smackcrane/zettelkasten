@@ -29,7 +29,7 @@ def list_IDs_titles():
 # get title from ID
 def get_title(ID):
     with open(kasten_dir+ID, 'r') as f:
-        title = f.readline()
+        title = f.readline().rstrip('\n')
     return title
 
 # list IDs of zettel that link to target ID

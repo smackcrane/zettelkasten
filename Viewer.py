@@ -52,13 +52,31 @@ class Viewer:
                 print(self.lines, file=f)
 
     def load(self):
-        #TODO: if the zettel has code, try to execute it and display results
-
         # load text from file as a list of lines
-        #   then break into lines of window length
         with open(self.filepath, 'r') as f:
             raw_lines = f.readlines()
-            raw_lines = [line.rstrip('\n') for line in raw_lines]
+        raw_lines = [line.rstrip('\n') for line in raw_lines]
+
+        # if zettel has code, try to execute it and display results
+        code_start = -1
+        # look for first line of code, marked by shebang
+        for i in range(len(raw_lines)):
+            if raw_lines[i].startswith('#!'):
+                code_start = i
+                break
+        # if we found a shebang: grab code, execute, and replace
+        if code_start > -1:
+            try:
+                code = '\n'.join(raw_lines[code_start:])
+                with io.StringIO() as out, redirect_stdout(out):
+                    exec(code)
+                    output = out.getvalue()
+                raw_lines = raw_lines[:code_start] + output.splitlines()
+            except Exception as e:
+                # if there's an error, show code and error
+                raw_lines += str(e).splitlines()
+
+        # break raw lines into lines of window length
         self.lines = []
         line_lengths = [] # to translate between raw_lines and self.lines
         for line in raw_lines:
