@@ -114,7 +114,7 @@ class Viewer:
             row = sum(line_lengths) + 1 # keep track of row for self.links
             for ID in backlinks:
                 row += 1
-                title = utils.load_zettel(ID)['TITLE']
+                title = utils.get_title(ID)
                 # add to text and add to links
                 self.lines.append(f'    <- #{ID} {title}')
                 self.links.append({
@@ -180,7 +180,7 @@ class Viewer:
             self.top = self.links[self.link]['row']
         self.refresh()
         ID = self.links[self.link]['ID'].lstrip('#')
-        title = utils.load_zettel(ID)['TITLE']
+        title = utils.get_title(ID)
         flag, val = 'status', '#'+ID+' '+title
         return flag, val
 
@@ -199,7 +199,7 @@ class Viewer:
             self.top = self.links[self.link]['row']
         self.refresh()
         ID = self.links[self.link]['ID'].lstrip('#')
-        title = utils.load_zettel(ID)['TITLE']
+        title = utils.get_title(ID)
         flag, val = 'status', '#'+ID+' '+title
         return flag, val
 

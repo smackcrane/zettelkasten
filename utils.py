@@ -26,12 +26,11 @@ def list_IDs_titles():
             zett += [{'ID': ID, 'TITLE': title}]
     return zett
 
-# load zettel from ID
-def load_zettel(ID):
+# get title from ID
+def get_title(ID):
     with open(kasten_dir+ID, 'r') as f:
         title = f.readline()
-    zettel = {'ID': ID, 'TITLE': title}
-    return zettel
+    return title
 
 # list IDs of zettel that link to target ID
 def list_backlinks(target_ID):

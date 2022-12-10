@@ -54,8 +54,8 @@ class StatusBar:
 
     def preview_ID(self, ID):
         if ID: # may be None
-            zettel = utils.load_zettel(ID)
-            text = zettel['ID'].ljust(9) + zettel['TITLE']
+            title = utils.get_title(ID)
+            text = ID.ljust(9) + title
             self.refresh(text)
 
     def set(self, text):
