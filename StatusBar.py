@@ -8,6 +8,7 @@
 import curses
 import utils
 from Keys import Keys
+import config
 
 class StatusBar:
     def __init__(self, win):
@@ -31,7 +32,7 @@ class StatusBar:
 
     def debugger(self, s='', state=False, log=None):
         if not log:
-            log = '/dev/pts/4'
+            log = config.logfile
         with open(log, 'a') as f:
             print(s, file=f)
             if state:

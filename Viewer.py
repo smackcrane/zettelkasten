@@ -40,7 +40,7 @@ class Viewer:
 
     def debugger(self, s='', state=False, log=None):
         if not log:
-            log = '/dev/pts/1'
+            log = config.logfile
         with open(log, 'a') as f:
             print(s, file=f)
             if state:

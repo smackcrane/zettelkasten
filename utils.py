@@ -8,11 +8,11 @@
 import datetime
 import re
 import os
-from config import kasten_dir, template_file
+from config import kasten_dir, logfile
 
 def debugger(s):
-    log = '/dev/pts/3'
-    with open(log, 'w') as f:
+    log = logfile
+    with open(log, 'a') as f:
         print(s, file=f)
 
 # entry point: list of IDs and titles

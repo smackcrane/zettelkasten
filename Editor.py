@@ -9,6 +9,7 @@ import curses
 import time
 import sys
 from Keys import Keys
+import config
 
 class Editor:
     def __init__(self, win, filepath, row=0, col=0):
@@ -52,7 +53,7 @@ class Editor:
 
     def debugger(self, s='', state=False, log=None):
         if not log:
-            log = '/dev/pts/2'
+            log = config.logfile
         with open(log, 'a') as f:
             print(s, file=f)
             if state:
