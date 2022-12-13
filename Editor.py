@@ -310,7 +310,7 @@ class Editor:
 
     def save(self):
         with open(self.filepath, 'w') as f:
-            f.write('\n'.join(self.lines))
+            f.write('\n'.join(self.lines) + '\n')
         self.flash()    # flash window to confirm
         self.refresh()
 
