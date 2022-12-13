@@ -61,4 +61,4 @@ This application allows you to write arbitrary python code in notes, which will 
 - In Editor, use `CTRL+a` (emacs-style) to jump to beginning of line, `CTRL+e` (emacs-style) to jump to end
 - Viewer will recognize strings like `https://blah` or `http://blah` as hyperlinks and make them active---pressing `ENTER` will open in firefox
 - Viewer will recognize strings like `~/foo/bar.baz` as filepaths and make them active---.jpg and .pdf extensions will be opened with qpdfview (other extensions/filetypes not yet supported, also only paths starting with `~/`)
-- Adding a `CODE:` field in editor will cause the viewer to execute the contents of the field as python code and show the output
+- A line starting with a shebang `#!` marks the rest of the note as python code---a viewer window will attempt to execute the code and show the output.
