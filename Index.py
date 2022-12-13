@@ -127,8 +127,8 @@ class Index:
                 self.update_list()
         elif k == Keys.RETURN: # end search and keep results
             if self.searching:
-                self.end_search()
-                flag, val = 'end_search', None
+                ID = self.end_search()
+                flag, val = 'end_search', ID
             elif self.command_mode:
                 self.end_command()
                 flag, val = 'exec_command', None
