@@ -3,6 +3,7 @@
 __pycache__
 
 kasten/
+plaintext_kasten/
 .logfile
 *log
 .stack_save

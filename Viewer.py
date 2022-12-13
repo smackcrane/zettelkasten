@@ -5,7 +5,6 @@
 #
 ############################################################################
 
-from ruamel import yaml
 import curses
 import re
 import io
@@ -41,7 +40,7 @@ class Viewer:
 
     def debugger(self, s='', state=False, log=None):
         if not log:
-            log = '/dev/pts/1'
+            log = config.logfile
         with open(log, 'a') as f:
             print(s, file=f)
             if state:
@@ -53,29 +52,31 @@ class Viewer:
                 print(self.lines, file=f)
 
     def load(self):
-        try:
-            # if the zettel has code, try to execute it and display results
-            with open(self.filepath, 'r') as f:
-                data = yaml.load(f, Loader=yaml.RoundTripLoader)
-                assert 'CODE' in data, "if not then skip to except block"
-                code = data['CODE']
+        # load text from file as a list of lines
+        with open(self.filepath, 'r') as f:
+            raw_lines = f.readlines()
+        raw_lines = [line.rstrip('\n') for line in raw_lines]
+
+        # if zettel has code, try to execute it and display results
+        code_start = -1
+        # look for first line of code, marked by shebang
+        for i in range(len(raw_lines)):
+            if raw_lines[i].startswith('#!'):
+                code_start = i
+                break
+        # if we found a shebang: grab code, execute, and replace
+        if code_start > -1:
+            try:
+                code = '\n'.join(raw_lines[code_start:])
                 with io.StringIO() as out, redirect_stdout(out):
                     exec(code)
                     output = out.getvalue()
-                data['CODE'] = output
-                raw_lines = yaml.dump(
-                                    data,
-                                    Dumper=yaml.RoundTripDumper
-                                    ).splitlines()
-        except Exception as e:
-            # load text from file as a list of lines
-            #   then break into lines of window length
-            with open(self.filepath, 'r') as f:
-                raw_lines = f.readlines()
-                raw_lines = [line.rstrip('\n') for line in raw_lines]
-            # if there was an unknown error, add a message to end of zettel
-            if type(e) != AssertionError:
-                raw_lines.append(f'ERROR: {e}')
+                raw_lines = raw_lines[:code_start] + output.splitlines()
+            except Exception as e:
+                # if there's an error, show code and error
+                raw_lines += str(e).splitlines()
+
+        # break raw lines into lines of window length
         self.lines = []
         line_lengths = [] # to translate between raw_lines and self.lines
         for line in raw_lines:
@@ -131,7 +132,7 @@ class Viewer:
             row = sum(line_lengths) + 1 # keep track of row for self.links
             for ID in backlinks:
                 row += 1
-                title = utils.load_zettel(ID)['TITLE']
+                title = utils.get_title(ID)
                 # add to text and add to links
                 self.lines.append(f'    <- #{ID} {title}')
                 self.links.append({
@@ -197,7 +198,7 @@ class Viewer:
             self.top = self.links[self.link]['row']
         self.refresh()
         ID = self.links[self.link]['ID'].lstrip('#')
-        title = utils.load_zettel(ID)['TITLE']
+        title = utils.get_title(ID)
         flag, val = 'status', '#'+ID+' '+title
         return flag, val
 
@@ -216,7 +217,7 @@ class Viewer:
             self.top = self.links[self.link]['row']
         self.refresh()
         ID = self.links[self.link]['ID'].lstrip('#')
-        title = utils.load_zettel(ID)['TITLE']
+        title = utils.get_title(ID)
         flag, val = 'status', '#'+ID+' '+title
         return flag, val
 

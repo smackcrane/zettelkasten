@@ -9,6 +9,7 @@ import curses
 import time
 import sys
 from Keys import Keys
+import config
 
 class Editor:
     def __init__(self, win, filepath, row=0, col=0):
@@ -17,7 +18,7 @@ class Editor:
         # load text from file as a list of lines (without trailing newlines)
         self.filepath = filepath
         with open(self.filepath, 'r') as f:
-            self.lines = f.readlines()
+            self.lines = f.readlines() or [''] # in case of empty file
         self.lines = [ line.rstrip('\n') for line in self.lines ]
         # dimensions of window
         self.rows, self.cols = self.win.getmaxyx()
@@ -28,7 +29,7 @@ class Editor:
         if row > 0:
             self.row = row
         else:
-            self.row = 1    # top row (ID) is not editable
+            self.row = 0
         self.col = col
         # hidden column for up/down btwn lines of different length
         self.hidden_col = col
@@ -52,7 +53,7 @@ class Editor:
 
     def debugger(self, s='', state=False, log=None):
         if not log:
-            log = '/dev/pts/2'
+            log = config.logfile
         with open(log, 'a') as f:
             print(s, file=f)
             if state:
@@ -60,7 +61,8 @@ class Editor:
                         + f'self.cols: {self.cols}\n'
                         + f'self.row: {self.row}\n'
                         + f'self.col: {self.col}\n'
-                        + f'self.top: {self.top}\n',
+                        + f'self.top: {self.top}\n'
+                        + f'self.lines: {self.lines}\n',
                         file=f)
 
     def start_search(self):
@@ -168,10 +170,8 @@ class Editor:
     # self.up/down/left/right just move relative to self.lines, cursor
     #   position and self.top are computed in self.refresh()
     def up(self):
-        if self.row > 1: # don't allow cursor to move above row 1
+        if self.row > 0:
             self.row -= 1
-        elif self.row == 1: # but do allow scrolling window to row 0
-            self.top = 0
         # check if we're past the end of a line
         if self.col > len(self.lines[self.row]):
             self.col = len(self.lines[self.row])

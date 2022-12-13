@@ -5,15 +5,14 @@
 #
 ############################################################################
 
-from ruamel import yaml
 import datetime
 import re
 import os
-from config import kasten_dir, template_file
+from config import kasten_dir, logfile
 
 def debugger(s):
-    log = '/dev/pts/3'
-    with open(log, 'w') as f:
+    log = logfile
+    with open(log, 'a') as f:
         print(s, file=f)
 
 # entry point: list of IDs and titles
@@ -23,29 +22,15 @@ def list_IDs_titles():
     zett = []
     for ID in IDs:
         with open(kasten_dir+ID, 'r') as f:
-            try:
-                zettel = yaml.load(f, Loader=yaml.SafeLoader)
-                zett += [{'ID': ID, 'TITLE': zettel['TITLE']}]
-            except Exception as e:
-                zett += [{'ID': ID,
-                    'TITLE': '----- ERROR ----- '+' '.join(str(e).split())}]
+            title = f.readline()
+            zett += [{'ID': ID, 'TITLE': title}]
     return zett
 
-# load zettel from ID
-def load_zettel(ID):
-    try:
-        with open(kasten_dir+ID, 'r') as f:
-                zettel = yaml.load(f, Loader=yaml.SafeLoader)
-    except Exception as e:
-        zettel = {'ID': ID,
-                'TITLE': str(e),
-                'BODY': str(e)}
-    # insist on returning string title and body
-    if 'TITLE' not in zettel or not isinstance(zettel['TITLE'], str):
-        zettel['TITLE'] = ''
-    if 'BODY' not in zettel or not isinstance(zettel['BODY'], str):
-        zettel['BODY'] = ''
-    return zettel
+# get title from ID
+def get_title(ID):
+    with open(kasten_dir+ID, 'r') as f:
+        title = f.readline().rstrip('\n')
+    return title
 
 # list IDs of zettel that link to target ID
 def list_backlinks(target_ID):
@@ -109,12 +94,9 @@ def new_zettel():
         letters = 'a'
     ID = YYMMDD + letters
 
-    # create file from template
-    with open(template_file, 'r') as f:
-        template = f.read()
-    template = template.replace('YYMMDDxx', ID)
-    with open(kasten_dir+ID, 'w') as f:
-        f.write(template)
+    # create empty file
+    with open(kasten_dir+ID, 'a') as f:
+        pass
 
     return ID
 
@@ -122,42 +104,17 @@ def new_zettel():
 def search_IDs_titles(search_text):
     IDs = os.listdir(path=kasten_dir)
     
-    # if search_text begins with '/', (remove it and) only search titles
-    if search_text[:1] == '/':
-        search_text = search_text[1:]
-        search_type = 'title'
-    # if search_text begins with '#', (remove it and) only search IDs
-    elif search_text[:1] == '#':
-        search_text = search_text[1:]
-        search_type = 'ID'
-    else:
-        search_type = 'full_text'
+    #TODO if search_text begins with '/', (remove it and) only search titles
+    #TODO if search_text begins with '#', (remove it and) only search IDs
     zett = []
     for ID in IDs:
         with open(kasten_dir+ID, 'r') as f:
-            if search_type == 'title' or search_type == 'ID':
-                try:
-                    zettel = yaml.load(f, Loader=yaml.SafeLoader)
-                    zettel['TITLE'] = zettel['TITLE'] or '' # beware None
-                    # caution: oversize load
-                    if (search_type == 'title' and search_text.lower() in zettel['TITLE'].lower()) or (search_type == 'ID' and search_text.lower() in ID):
-                        zett.append({'ID':ID, 'TITLE': zettel['TITLE']})
-                except:
-                    # if we can't read the yaml then just ignore it
-                    pass
-            else: # search_type == 'full_text'
-                file_text = f.read()
-                # add to the list if we found the search text
-                if search_text.lower() in file_text.lower():
-                    try:
-                        f.seek(0) # go back to beginning of file
-                        zettel = yaml.load(f, Loader=yaml.SafeLoader)
-                        zett.append({'ID': ID, 'TITLE': zettel['TITLE']})
-                    except yaml.scanner.ScannerError:
-                        zett.append({'ID': ID,
-                            'TITLE': '-'*15 +
-                                ' HELP MY YAML IS BROKEN ' +
-                                '-'*15})
+            file_text = f.read()
+            # add to the list if we found the search text
+            if search_text.lower() in file_text.lower():
+                f.seek(0) # go back to beginning of file
+                title = f.readline()
+                zett.append({'ID': ID, 'TITLE': title})
     return zett
 
 # generate graph using protograph
@@ -170,12 +127,9 @@ def protograph(directed=False):
         with open(kasten_dir+ID, 'r') as f:
             text = f.read()     # grab text to search for links
             f.seek(0)
-            try:                # grab data to extract title
-                data = yaml.load(f, Loader=yaml.SafeLoader)
-            except yaml.scanner.ScannerError:
-                data = {'TITLE': '--BROKEN YAML--'}
+            title = f.readline()
         # add node with ID and title to list in protograph format
-        node_list.append(f'node {ID} --hovertext {data["TITLE"]}')
+        node_list.append(f'node {ID} --hovertext {title}')
         # for each link
         for link_ID in link.findall(text):
             # get node number of linked zettel
@@ -215,6 +169,8 @@ def convert_row(ID, cols, viewer_row=None, editor_row=None):
             else:
                 # ceiling division to find number of rows
                 line_lengths.append( -(len(line) // -cols) )
+        # in case file is empty
+        return 0
     if viewer_row != None:
         # convert from viewer to editor
         editor_row = 0
