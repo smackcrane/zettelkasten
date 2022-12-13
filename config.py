@@ -7,7 +7,6 @@
 
 path = "/home/sander/zettelkasten/"
 
-kasten_dir = path + "plaintext_kasten/"
-template_file = path + "template.yaml"
+kasten_dir = path + "kasten/"
 logfile = path + ".logfile"
 stack_save = path + ".stack_save"
