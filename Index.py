@@ -25,6 +25,8 @@ class Index:
         self.searching = False
         # flag for command in progress
         self.command_mode = False
+        # flag for preview mode
+        self.preview = False
         
         # compile list of zettel IDs and titles
         self.zett = utils.list_IDs_titles()
@@ -123,6 +125,9 @@ class Index:
             elif self.command_mode:
                 self.end_command()
                 flag, val = 'end_command', None
+            elif self.preview:
+                self.preview = False
+                flag, val = 'end_preview', None
             else:
                 self.update_list()
         elif k == Keys.RETURN: # end search and keep results
@@ -143,6 +148,13 @@ class Index:
         elif k == ord('r'):         self.update_list()
         elif k == ord('o'): flag, val = 'open', self.zett[self.row]['ID']
         elif k == ord('e'): flag, val = 'edit', self.zett[self.row]['ID']
+        elif k == ord('p'):
+            if self.preview:
+                self.preview = False
+                flag, val = 'end_preview', None
+            else:
+                self.preview = True
+                flag, val = 'start_preview', None
         elif k == ord('+'):         flag, val = 'new', None
         elif k == Keys.CTRL_n:      flag, val = 'new', None
         elif k == ord('/'):

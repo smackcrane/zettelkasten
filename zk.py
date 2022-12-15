@@ -34,6 +34,12 @@ def main(screen):
     # create index window, not in window stack
     index = Index(curses.newwin(curses.LINES-1,curses.COLS))
     show_index = False   # flag to show index window or not
+    # preview pane, not in window stack
+    preview = Viewer(
+            curses.newwin( curses.LINES-1,curses.COLS//2,
+                0,curses.COLS-curses.COLS//2),
+            config.kasten_dir+index.active_ID())
+    show_preview = False     # flag to show preview pane
     # create status bar at bottom row, not in window stack
     status = StatusBar(curses.newwin( 1,curses.COLS, curses.LINES-1,0 ))
 
@@ -60,9 +66,11 @@ def main(screen):
     while True:
         try:    # general error handling
             # refresh screen
-            if show_index:
+            if show_index or not stack:
                 stack.refresh()
                 index.refresh()
+                if show_preview:
+                    preview.load_ID(index.active_ID())
             else:
                 index.refresh()
                 stack.refresh()
@@ -152,6 +160,8 @@ def main(screen):
                     index.search(status.search_text)
                 if not show_index:
                     stack.refresh()
+            elif flag == 'start_preview':       show_preview = True
+            elif flag == 'end_preview':         show_preview = False
             elif flag == 'insert_link':
                 status.end_search()
                 ID = index.end_search()

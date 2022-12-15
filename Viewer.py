@@ -282,6 +282,15 @@ class Viewer:
         self.load()
         self.refresh()
 
+    # load new zettel in this window
+    def load_ID(self, ID):
+        self.filepath = config.kasten_dir+ID
+        self.link = -1
+        self.top = 0
+        self.load()
+        self.refresh()
+        return None, None
+
     def keypress(self, k):
         flag, val = None, None
         if k == Keys.UP:            self.up()

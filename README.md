@@ -15,6 +15,7 @@
 - `o` (open) or `ENTER` to open zettel for viewing
 - `e` (edit) to open zettel for editing
 - `r` (refresh) to refresh list (after adding or editing zettel)
+- `p` (preview) to toggle preview pane
 - `/` (vim-style) to start a search, then type search query, then `ENTER` to interact with search results or `ESC` to cancel search
 
 ### Viewer Window
