@@ -103,18 +103,42 @@ def new_zettel():
 # search zettels for text, return list of ID & title dicts
 def search_IDs_titles(search_text):
     IDs = os.listdir(path=kasten_dir)
-    
-    #TODO if search_text begins with '/', (remove it and) only search titles
-    #TODO if search_text begins with '#', (remove it and) only search IDs
     zett = []
-    for ID in IDs:
-        with open(kasten_dir+ID, 'r') as f:
-            file_text = f.read()
-            # add to the list if we found the search text
-            if search_text.lower() in file_text.lower():
-                f.seek(0) # go back to beginning of file
-                title = f.readline()
-                zett.append({'ID': ID, 'TITLE': title})
+    # if search starts with '/', only search titles
+    if search_text.startswith('/'):
+        search_text = search_text[1:]
+        for ID in IDs:
+            with open(kasten_dir+ID, 'r') as f:
+                # readline for title
+                text = f.readline()
+                # add to the list if we found the search text
+                if search_text.lower() in text.lower():
+                    f.seek(0) # go back to beginning of file
+                    title = f.readline()
+                    zett.append({'ID': ID, 'TITLE': title})
+    # if search starts with '#', only search IDs
+    elif search_text.startswith('#'):
+        search_text = search_text[1:]
+        for ID in IDs:
+            with open(kasten_dir+ID, 'r') as f:
+                # just ID
+                text = ID
+                # add to the list if we found the search text
+                if search_text.lower() in text.lower():
+                    f.seek(0) # go back to beginning of file
+                    title = f.readline()
+                    zett.append({'ID': ID, 'TITLE': title})
+    # by default search full text
+    else:
+        for ID in IDs:
+            with open(kasten_dir+ID, 'r') as f:
+                # read for full text
+                text = f.read()
+                # add to the list if we found the search text
+                if search_text.lower() in text.lower():
+                    f.seek(0) # go back to beginning of file
+                    title = f.readline()
+                    zett.append({'ID': ID, 'TITLE': title})
     return zett
 
 # generate graph using protograph
