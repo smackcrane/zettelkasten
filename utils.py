@@ -194,7 +194,8 @@ def convert_row(ID, cols, viewer_row=None, editor_row=None):
                 # ceiling division to find number of rows
                 line_lengths.append( -(len(line) // -cols) )
         # in case file is empty
-        return 0
+        if not line_lengths:
+            return 0
     if viewer_row != None:
         # convert from viewer to editor
         editor_row = 0
