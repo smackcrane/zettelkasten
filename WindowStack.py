@@ -97,9 +97,9 @@ class WindowStack:
     # takes rows, cols dimensions for a new window
     # returns y, x upper-left coordinates for recommended placement
     def old_recommend(self, rows, cols):
-        # compute mass of each rows x cols rectangle and choose the smallest
+        # compute mass of each rows x cols rectangle and choose the least
         # strat: taking cumulative sum of rows and then cumulative sum of 
-        #   columns gives an array whose entries are cumulative sum of the 
+        #   columns gives an array whose entries are cumulative sum of the
         #   rectangle between 0,0 and that entry
         rect_sums = self.dmap.cumsum(axis=0).cumsum(axis=1)
         # pad with zeros to get edges to work out
@@ -133,8 +133,9 @@ class WindowStack:
         scr_rows, scr_cols = self.dmap.shape
         candidate = [0,0]
         candidate_score = np.multiply(density, self.dmap[:rows,:cols]).sum()
-        for x in range(scr_cols - cols):
-            for y in range(scr_rows - rows):
+
+        for x in range(scr_cols - cols + 1):
+            for y in range(scr_rows - rows + 1):
                 score = np.multiply(density, self.dmap[y:y+rows,x:x+cols]).sum()
                 if score <= candidate_score:
                     candidate_score = score

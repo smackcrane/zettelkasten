@@ -43,9 +43,9 @@ def main(screen):
     # create status bar at bottom row, not in window stack
     status = StatusBar(curses.newwin( 1,curses.COLS, curses.LINES-1,0 ))
 
-    # standard size for subwindows: at most quarter-screen, at most 20x70
-    std_rows = min(20, curses.LINES//2)
-    std_cols = min(70, curses.COLS//2)
+    # standard size for subwindows: at most half, at most 40x80
+    std_rows = min(40, curses.LINES-1)
+    std_cols = min(80, curses.COLS//2)
 
     # load saved list of open zettel
     try:
