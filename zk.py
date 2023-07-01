@@ -34,6 +34,10 @@ def main(screen):
     # create index window, not in window stack
     index = Index(curses.newwin(curses.LINES-1,curses.COLS))
     show_index = False   # flag to show index window or not
+    # if kasten is empty, create a first zettel
+    if not index.zett:
+        utils.new_zettel()
+        index.update_list()
     # preview pane, not in window stack
     preview = Viewer(
             curses.newwin( curses.LINES-1,curses.COLS//2,
