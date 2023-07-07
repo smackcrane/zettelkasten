@@ -28,10 +28,9 @@ class Index:
         # flag for preview mode
         self.preview = False
         
-        # compile list of zettel IDs and titles
-        self.zett = utils.list_IDs_titles()
-
-        self.refresh()
+        # sync, compile list of zettel IDs and titles, refresh
+        self.zett = []
+        self.update_list(sync=True)
 
     def getbegyx(self):
         return self.win.getbegyx()
@@ -82,7 +81,9 @@ class Index:
         self.zett.sort(key=lambda zettel: utils.ID_sort(zettel['ID']))
         self.refresh()
 
-    def update_list(self):
+    def update_list(self, sync=False):
+        if sync:
+            utils.sync()
         self.zett = utils.list_IDs_titles()
         self.refresh()
 
@@ -145,7 +146,7 @@ class Index:
         elif self.command_mode:
             # only allow keys above this point in command mode
             flag, val = 'command', None
-        elif k == ord('r'):         self.update_list()
+        elif k == ord('r'):         self.update_list(sync=True)
         elif k == ord('o'): flag, val = 'open', self.zett[self.row]['ID']
         elif k == ord('e'): flag, val = 'edit', self.zett[self.row]['ID']
         elif k == ord('p'):

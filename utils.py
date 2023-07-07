@@ -8,7 +8,8 @@
 import datetime
 import re
 import os
-from config import kasten_dir, logfile
+import subprocess
+from config import kasten_dir, logfile, kasten_sync
 
 def debugger(s):
     log = logfile
@@ -97,8 +98,15 @@ def new_zettel():
     # create empty file
     with open(kasten_dir+ID, 'a') as f:
         pass
+    sync()
 
     return ID
+
+# sync kasten with remote at config.kasten_sync
+def sync():
+    if kasten_sync:
+        completed = subprocess.run(f'rclone bisync --max-delete 0 {kasten_dir} {kasten_sync}', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        completed.check_returncode()
 
 # search zettels for text, return list of ID & title dicts
 def search_IDs_titles(search_text):

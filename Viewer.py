@@ -318,6 +318,7 @@ class Viewer:
         elif k == ord('g'):         flag, val = self.go()
         elif k == ord('o'):         flag, val = self.open_link()
         elif k == ord('r'):
+            utils.sync()
             self.load()
             self.refresh()
         elif k == Keys.CTRL_SHIFT_UP:    flag, val = 'expand', 'vertical'

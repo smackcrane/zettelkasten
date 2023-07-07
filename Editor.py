@@ -10,6 +10,7 @@ import time
 import sys
 from Keys import Keys
 import config
+import utils
 
 class Editor:
     def __init__(self, win, filepath, row=0, col=0):
@@ -311,6 +312,7 @@ class Editor:
     def save(self):
         with open(self.filepath, 'w') as f:
             f.write('\n'.join(self.lines) + '\n')
+        utils.sync()
         self.flash()    # flash window to confirm
         self.refresh()
 

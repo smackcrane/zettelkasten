@@ -100,12 +100,8 @@ class StatusBar:
                 self.text = ''
             except Exception as e:
                 self.text = 'ERROR: ' + str(e)
-        elif self.command_text == 'count':
-            instruction = 'count'
-        elif self.command_text == 'sort':
-            instruction = 'sort'
         else:
-            self.text = f'command "{self.command_text}" not recognized'
+            instruction = self.command_text
         self.refresh()
         return instruction
 

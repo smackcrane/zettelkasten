@@ -44,7 +44,8 @@
 - Put repo somewhere on y'r machine
 - Edit `config.py` to direct `path` towards repo
 - Create `kasten` directory top level in repo (as specified in `config.py`)
-- Maybe edit `Keys.py` if your compty has different key codes?
+- Set `kasten_sync` in `config.py` to a cloud location for syncing between devices, or set to `False` to disable syncing (to enable, also make sure you have `rclone bisync` working)
+- Edit `Keys.py` if your compty has different key codes
 - Run `zk.py` and enjoy
 
 ### `exec` Disclaimer

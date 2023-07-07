@@ -180,6 +180,8 @@ def main(screen):
                     status.set(str(len(index.zett)))
                 elif instruction == 'sort':
                     index.sort()
+                else:
+                    status.set(f'command "{instruction}" not recognized')
             elif flag == 'status':
                 status.set(val) # set text in status bar
             elif flag == 'close_window':
@@ -193,14 +195,6 @@ def main(screen):
                     break
                 else:
                     status.set('Quit failed, close editors')
-            #    if val == 'Index' and len(stack) > 1:
-            #        # don't kill index unless it's the last window
-            #        pass
-            #    elif val == 'Index':
-            #        # if it is the last window, quit altogether
-            #        break
-            #    else:
-            #        stack.pop()
             elif flag == 'window_up':
                 if show_index:
                     show_index = False
