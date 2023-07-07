@@ -4,6 +4,7 @@ __pycache__
 
 kasten/
 config.py
+Keys.py
 .logfile
 *log
 .stack_save
