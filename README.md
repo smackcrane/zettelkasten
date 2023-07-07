@@ -42,10 +42,10 @@
 ## Setup
 
 - Put repo somewhere on y'r machine
-- Edit `config.py` to direct `path` towards repo
+- Rename `config_template.py` to `config.py` and edit to direct `path` towards repo
 - Create `kasten` directory top level in repo (as specified in `config.py`)
 - Set `kasten_sync` in `config.py` to a cloud location for syncing between devices, or set to `False` to disable syncing (to enable, also make sure you have `rclone bisync` working)
-- Edit `Keys.py` if your compty has different key codes
+- Rename `Keys_template.py` to `Keys.py` and edit if your compty has different key codes
 - Run `zk.py` and enjoy
 
 ### `exec` Disclaimer

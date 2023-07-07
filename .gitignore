@@ -3,6 +3,7 @@
 __pycache__
 
 kasten/
+config.py
 .logfile
 *log
 .stack_save
