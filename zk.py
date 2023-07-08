@@ -18,6 +18,7 @@ from Index import Index
 from Editor import Editor
 from Viewer import Viewer
 from StatusBar import StatusBar
+from subprocess import CalledProcessError
 
 def debugger(s='', log=None):
     if not log:
@@ -31,6 +32,17 @@ def main(screen):
     # stack of windows/containers active on screen in order
     stack = WindowStack(screen)
 
+    # create status bar at bottom row, not in window stack
+    status = StatusBar(curses.newwin( 1,curses.COLS, curses.LINES-1,0 ))
+    # sync with remote if configured
+    if config.kasten_sync:
+        status.set(f'syncing with {config.kasten_sync}')
+        try:
+            utils.sync()
+            status.set('sync complete')
+        except CalledProcessError as e:
+            status.error(e)
+
     # create index window, not in window stack
     index = Index(curses.newwin(curses.LINES-1,curses.COLS))
     show_index = False   # flag to show index window or not
@@ -38,14 +50,13 @@ def main(screen):
     if not index.zett:
         utils.new_zettel()
         index.update_list()
+
     # preview pane, not in window stack
     preview = Viewer(
             curses.newwin( curses.LINES-1,curses.COLS//2,
                 0,curses.COLS-curses.COLS//2),
             config.kasten_dir+index.active_ID())
     show_preview = False     # flag to show preview pane
-    # create status bar at bottom row, not in window stack
-    status = StatusBar(curses.newwin( 1,curses.COLS, curses.LINES-1,0 ))
 
     # standard size for subwindows: at most half, at most 40x80
     std_rows = min(40, curses.LINES-1)

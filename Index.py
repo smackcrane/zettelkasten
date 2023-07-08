@@ -28,9 +28,9 @@ class Index:
         # flag for preview mode
         self.preview = False
         
-        # sync, compile list of zettel IDs and titles, refresh
-        self.zett = []
-        self.update_list(sync=True)
+        # compile list of zettel IDs and titles, refresh
+        self.zett = utils.list_IDs_titles()
+        self.refresh()
 
     def getbegyx(self):
         return self.win.getbegyx()
