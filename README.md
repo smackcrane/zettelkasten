@@ -44,7 +44,6 @@
 - Put repo somewhere on y'r machine
 - Rename `config_template.py` to `config.py` and edit to direct `path` towards repo
 - Create `kasten` directory top level in repo (as specified in `config.py`)
-- Set `kasten_sync` in `config.py` to a cloud location for syncing between devices, or set to `False` to disable syncing (to enable, also make sure you have `rclone bisync` working)
 - Rename `Keys_template.py` to `Keys.py` and edit if your compty has different key codes
 - Run `zk.py` and enjoy
 
@@ -64,3 +63,4 @@ This application allows you to write arbitrary python code in notes, which will 
 - Viewer will recognize strings like `https://blah` or `http://blah` as hyperlinks and make them active---pressing `ENTER` will open in firefox
 - Viewer will recognize strings like `~/foo/bar.baz` as filepaths and make them active---.jpg and .pdf extensions will be opened with qpdfview (other extensions/filetypes not yet supported, also only paths starting with `~/`)
 - A line starting with a shebang `#!` marks the rest of the note as python code---a viewer window will attempt to execute the code and show the output.
+- Set `kasten_sync` in `config.py` to an rclone remote to enable syncing between device via `rclone bisync` (and initialize bisync with a `--resync` run on the relevant directories)
