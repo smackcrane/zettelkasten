@@ -82,7 +82,12 @@ class Index:
         self.refresh()
 
     def update_list(self, sync=False):
-        if sync:
+        if sync and config.kasten_sync:
+            try:
+                self.win.addstr(0,0," syncing ... ",curses.A_REVERSE)
+                self.win.refresh()
+            except curses.error:
+                pass
             utils.sync()
         self.zett = utils.list_IDs_titles()
         self.refresh()

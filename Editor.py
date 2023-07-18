@@ -310,8 +310,20 @@ class Editor:
         return flag, val
 
     def save(self):
+        try:
+            self.win.addstr(0,0," saving ... ",curses.A_REVERSE)
+            self.win.refresh()
+        except curses.error:
+            pass
         with open(self.filepath, 'w') as f:
             f.write('\n'.join(self.lines) + '\n')
+        if config.kasten_sync:
+            try:
+                self.win.addstr(0,0," syncing ... ",curses.A_REVERSE)
+                self.win.refresh()
+            except curses.error:
+                pass
+            utils.sync()
         self.flash()    # flash window to confirm
         self.refresh()
 
