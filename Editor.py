@@ -150,7 +150,7 @@ class Editor:
         curses.curs_set(1)
         try:
             self.win.move( y,x )
-        except:
+        except curses.error:
             # as noted above, if there's a single line that fills past the
             #   whole window, the current code will allow us to move outside
             #   the window and error

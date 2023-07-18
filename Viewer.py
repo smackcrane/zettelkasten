@@ -164,7 +164,7 @@ class Viewer:
                 if 0 <= row + 1 < self.rows:
                     self.win.addstr( row+1,0,
                             link['ID'][breakpt:], attr )
-            except:     # painting the lower right corner raises error
+            except curses.error:     # painting the lower right corner raises error
                 pass    # but only after painting, so just ignore error
         # hide cursor
         curses.curs_set(0)
