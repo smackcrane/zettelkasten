@@ -156,14 +156,6 @@ def main(screen):
             elif flag == 'end_search':
                 status.end_search()
                 index.end_search()
-                # possible val ID of search result to open
-                if val:
-                    ID = val
-                    y, x = stack.recommend(std_rows, std_cols)
-                    stack.push(Viewer(
-                        curses.newwin( std_rows,std_cols, y,x ),
-                        config.kasten_dir+ID))
-                    show_index = False
             elif flag == 'searching':
                 if val == 'up':
                     index.up()

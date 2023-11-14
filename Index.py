@@ -131,10 +131,10 @@ class Index:
                 flag, val = 'end_preview', None
             else:
                 self.update_list()
-        elif k == Keys.RETURN: # end search and keep results
-            if self.searching:
+        elif k == Keys.RETURN:
+            if self.searching: # end search and keep results
                 ID = self.end_search()
-                flag, val = 'end_search', ID
+                flag, val = 'end_search', None
             elif self.command_mode:
                 self.end_command()
                 flag, val = 'exec_command', None
