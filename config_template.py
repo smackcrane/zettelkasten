@@ -5,7 +5,7 @@
 #
 ############################################################################
 
-path = "/home/sander/zettelkasten/"
+path = "/path/to/zettelkasten/"
 
 kasten_dir = path + "kasten/"
 logfile = path + ".logfile"
