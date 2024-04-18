@@ -88,7 +88,7 @@ class Index:
         self.refresh()
 
     def refresh(self):
-        self.win.erase()
+        self.win.clear()
         # for each visible line
         for i in range(self.top, min(self.top+self.rows, len(self.zett))):
             # i = row in zettel list, j = row in window

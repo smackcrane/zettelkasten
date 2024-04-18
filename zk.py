@@ -183,6 +183,8 @@ def main(screen):
                     status.set(str(len(index.zett)))
                 elif instruction == 'sort':
                     index.sort()
+                elif instruction == 'sync':
+                    utils.sync()
                 else:
                     status.set(f'command "{instruction}" not recognized')
             elif flag == 'status':
@@ -192,6 +194,7 @@ def main(screen):
             elif flag == 'quit':
                 # attempt to save and quit, failing if there is an editor
                 if stack.quit_ok():
+                    utils.sync()
                     filepaths = stack.list_filepaths()
                     with open(config.stack_save, 'w') as f:
                         f.write('\n'.join(filepaths))
@@ -229,7 +232,7 @@ def main(screen):
                 error_loop = True
         except KeyboardInterrupt:
             debugger(f'KeyboardInterrupt')
-            status.error('KeyboardInterrupt: press any key to cancel, or KeyboardInterrupt again to quit')
+            status.error('KeyboardInterrupt: press any key to cancel, or KeyboardInterrupt again to quit WITHOUT SAVING')
             screen.getch() # not sure why two are needed, but doesn't
             screen.getch() # seem to work with just one?
 

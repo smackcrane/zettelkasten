@@ -98,7 +98,6 @@ def new_zettel():
     # create empty file
     with open(kasten_dir+ID, 'a') as f:
         pass
-    sync()
 
     return ID
 
